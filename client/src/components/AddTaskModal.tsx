@@ -90,7 +90,8 @@ export default function AddTaskModal() {
         title: taskName,
         description: taskDescription ? `${taskDescription}${taskCategory ? ` [${taskCategory}]` : ''}` : (taskCategory ? `[${taskCategory}]` : ''),
         points: parseInt(taskPoints),
-        time: taskTime
+        time: taskTime,
+        date: null // Add date field which will be used with the calendar feature
       });
       
       toast({

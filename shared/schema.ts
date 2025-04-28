@@ -17,6 +17,7 @@ export const tasks = pgTable("tasks", {
   description: text("description"),
   points: integer("points").notNull(),
   time: text("time"),
+  date: text("date"),
   isCompleted: boolean("is_completed").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -58,6 +59,7 @@ export const insertTaskSchema = createInsertSchema(tasks).pick({
   description: true,
   points: true,
   time: true,
+  date: true,
 });
 
 export const insertRewardSchema = createInsertSchema(rewards).pick({
