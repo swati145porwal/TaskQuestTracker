@@ -88,10 +88,12 @@ export default function AddTaskModal() {
     try {
       await addTask({
         title: taskName,
-        description: taskDescription ? `${taskDescription}${taskCategory ? ` [${taskCategory}]` : ''}` : (taskCategory ? `[${taskCategory}]` : ''),
+        description: taskDescription,
         points: parseInt(taskPoints),
         time: taskTime,
-        date: null // Add date field which will be used with the calendar feature
+        date: null, // Add date field which will be used with the calendar feature
+        category: taskCategory,
+        googleEventId: null
       });
       
       toast({
