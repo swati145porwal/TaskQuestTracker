@@ -3,7 +3,8 @@ import {
   tasks, type Task, type InsertTask,
   rewards, type Reward, type InsertReward,
   redeemedRewards, type RedeemedReward, type InsertRedeemedReward,
-  completedTasks, type CompletedTask, type InsertCompletedTask
+  completedTasks, type CompletedTask, type InsertCompletedTask,
+  taskProofs, type TaskProof, type InsertTaskProof
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, between } from "drizzle-orm";
@@ -43,6 +44,11 @@ export interface IStorage {
   getCompletedTasks(userId: number): Promise<CompletedTask[]>;
   getCompletedTasksForTimePeriod(userId: number, startDate: Date, endDate: Date): Promise<CompletedTask[]>;
   createCompletedTask(completedTask: InsertCompletedTask): Promise<CompletedTask>;
+
+  // Task Proof methods
+  getTaskProofs(completedTaskId: number): Promise<TaskProof[]>;
+  createTaskProof(taskProof: InsertTaskProof): Promise<TaskProof>;
+  deleteTaskProof(proofId: number): Promise<boolean>;
 
   // Session store
   sessionStore: any; // Type as 'any' to avoid import issues
@@ -200,6 +206,25 @@ export class DatabaseStorage implements IStorage {
   async createCompletedTask(insertCompletedTask: InsertCompletedTask): Promise<CompletedTask> {
     const result = await db.insert(completedTasks).values(insertCompletedTask).returning();
     return result[0];
+  }
+
+  // Task Proof methods
+  async getTaskProofs(completedTaskId: number): Promise<TaskProof[]> {
+    return db
+      .select()
+      .from(taskProofs)
+      .where(eq(taskProofs.completedTaskId, completedTaskId))
+      .orderBy(desc(taskProofs.uploadedAt));
+  }
+
+  async createTaskProof(insertTaskProof: InsertTaskProof): Promise<TaskProof> {
+    const result = await db.insert(taskProofs).values(insertTaskProof).returning();
+    return result[0];
+  }
+
+  async deleteTaskProof(proofId: number): Promise<boolean> {
+    const result = await db.delete(taskProofs).where(eq(taskProofs.id, proofId)).returning();
+    return result.length > 0;
   }
 }
 

@@ -52,6 +52,14 @@ export const completedTasks = pgTable("completed_tasks", {
   pointsEarned: integer("points_earned").notNull(),
 });
 
+export const taskProofs = pgTable("task_proofs", {
+  id: serial("id").primaryKey(),
+  completedTaskId: integer("completed_task_id").notNull(),
+  proofType: text("proof_type").notNull(), // "image" or "audio"
+  proofUrl: text("proof_url").notNull(),
+  uploadedAt: timestamp("uploaded_at").notNull().defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -89,6 +97,12 @@ export const insertCompletedTaskSchema = createInsertSchema(completedTasks).pick
   pointsEarned: true,
 });
 
+export const insertTaskProofSchema = createInsertSchema(taskProofs).pick({
+  completedTaskId: true,
+  proofType: true,
+  proofUrl: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -104,3 +118,6 @@ export type RedeemedReward = typeof redeemedRewards.$inferSelect;
 
 export type InsertCompletedTask = z.infer<typeof insertCompletedTaskSchema>;
 export type CompletedTask = typeof completedTasks.$inferSelect;
+
+export type InsertTaskProof = z.infer<typeof insertTaskProofSchema>;
+export type TaskProof = typeof taskProofs.$inferSelect;
