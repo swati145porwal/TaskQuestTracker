@@ -648,6 +648,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Avatar routes
+  app.get("/api/avatars", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const avatars = await storage.getAvatars();
+      res.json(avatars);
+    } catch (error) {
+      console.error("Error fetching avatars:", error);
+      res.status(500).json({ error: "Failed to fetch avatars" });
+    }
+  });
+
+  app.get("/api/avatars/unlocked", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      // Get all avatars that the user has unlocked based on their streak
+      const avatars = await storage.getAvatars();
+      const unlockedAvatars = avatars.filter(avatar => 
+        avatar.isDefault || avatar.streakRequired <= user.streak
+      );
+      
+      res.json(unlockedAvatars);
+    } catch (error) {
+      console.error("Error fetching unlocked avatars:", error);
+      res.status(500).json({ error: "Failed to fetch unlocked avatars" });
+    }
+  });
+
+  app.put("/api/user/avatar", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const { avatarId } = req.body;
+      
+      if (!avatarId || isNaN(Number(avatarId))) {
+        return res.status(400).json({ error: "Invalid avatar ID" });
+      }
+      
+      // Verify that the avatar exists
+      const avatar = await storage.getAvatar(Number(avatarId));
+      if (!avatar) {
+        return res.status(404).json({ error: "Avatar not found" });
+      }
+      
+      // Verify that the user has unlocked this avatar
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      if (!avatar.isDefault && avatar.streakRequired > user.streak) {
+        return res.status(403).json({ 
+          error: "You haven't unlocked this avatar yet",
+          requiredStreak: avatar.streakRequired,
+          currentStreak: user.streak
+        });
+      }
+      
+      // Update the user's avatar
+      const updatedUser = await storage.updateUserAvatar(userId, Number(avatarId));
+      
+      res.json({ 
+        success: true, 
+        currentAvatarId: updatedUser?.currentAvatarId 
+      });
+    } catch (error) {
+      console.error("Error updating user avatar:", error);
+      res.status(500).json({ error: "Failed to update user avatar" });
+    }
+  });
+
+  // Admin route for creating avatars (in a real app, this would be protected with admin middleware)
+  app.post("/api/avatars", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const avatarData = req.body;
+      const parsedAvatar = insertAvatarSchema.parse(avatarData);
+      
+      const newAvatar = await storage.createAvatar(parsedAvatar);
+      res.status(201).json(newAvatar);
+    } catch (error) {
+      console.error("Error creating avatar:", error);
+      res.status(400).json({ error: "Invalid avatar data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
