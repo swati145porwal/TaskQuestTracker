@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, RepeatIcon } from "lucide-react";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, Repeat } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -298,7 +298,7 @@ export default function AddTaskModal() {
                         <div className="bg-gray-50 p-3 rounded-md space-y-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <RepeatIcon className="h-4 w-4 text-gray-500" />
+                              <Repeat className="h-4 w-4 text-gray-500" />
                               <span className="text-sm text-gray-600">Make it recurring</span>
                             </div>
                             <button

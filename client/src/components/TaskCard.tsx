@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, RepeatIcon, Check } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TaskCardProps {
@@ -267,7 +267,7 @@ export default function TaskCard({ task }: TaskCardProps) {
                         className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                         whileHover={{ x: 2 }}
                       >
-                        <RepeatIcon className="h-3.5 w-3.5 text-gray-600" />
+                        <Repeat className="h-3.5 w-3.5 text-gray-600" />
                         <span>Make recurring</span>
                       </motion.button>
                     </div>
