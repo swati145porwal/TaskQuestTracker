@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -8,6 +8,9 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   points: integer("points").notNull().default(0),
   streak: integer("streak").notNull().default(0),
+  googleRefreshToken: text("google_refresh_token"),
+  googleEmail: text("google_email"),
+  googlePictureUrl: text("google_picture_url"),
 });
 
 export const tasks = pgTable("tasks", {
@@ -18,8 +21,10 @@ export const tasks = pgTable("tasks", {
   points: integer("points").notNull(),
   time: text("time"),
   date: text("date"),
+  category: text("category"),
   isCompleted: boolean("is_completed").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  googleEventId: text("google_event_id"),
 });
 
 export const rewards = pgTable("rewards", {
@@ -60,6 +65,8 @@ export const insertTaskSchema = createInsertSchema(tasks).pick({
   points: true,
   time: true,
   date: true,
+  category: true,
+  googleEventId: true,
 });
 
 export const insertRewardSchema = createInsertSchema(rewards).pick({
