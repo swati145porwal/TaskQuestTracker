@@ -102,17 +102,18 @@ export default function TaskCalendar() {
               onSelect={handleDateSelect}
               className="rounded-md"
               modifiersClassNames={{
+                today: "bg-accent/20 font-bold text-accent-foreground",
                 selected: "bg-primary text-primary-foreground",
               }}
-              components={{
-                Day: ({ date, ...props }) => {
-                  const extraClass = getDateHasTasksClass(date);
-                  return (
-                    <button 
-                      {...props} 
-                      className={`${props.className} ${extraClass} hover:bg-primary/20`}
-                    />
-                  );
+              modifiers={{
+                hasTasks: (date: Date) => 
+                  tasks.some(task => task.date && isSameDay(new Date(task.date), date))
+              }}
+              modifiersStyles={{
+                hasTasks: {
+                  fontWeight: 'bold',
+                  border: '2px solid rgb(var(--primary))',
+                  color: 'rgb(var(--primary))'
                 }
               }}
             />

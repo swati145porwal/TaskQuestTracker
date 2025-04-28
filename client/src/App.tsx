@@ -10,6 +10,7 @@ import TasksPage from "@/pages/TasksPage";
 import RewardsPage from "@/pages/RewardsPage";
 import StatsPage from "@/pages/StatsPage";
 import HistoryPage from "@/pages/HistoryPage";
+import CalendarPage from "@/pages/CalendarPage";
 import PointsAnimation from "@/components/PointsAnimation";
 import { TaskProvider } from "./context/TaskContext";
 
@@ -40,6 +41,7 @@ function AppRouter() {
   return (
     <Switch>
       <Route path="/" component={TasksPage} />
+      <Route path="/calendar" component={CalendarPage} />
       <Route path="/rewards" component={RewardsPage} />
       <Route path="/stats" component={StatsPage} />
       <Route path="/history" component={HistoryPage} />
