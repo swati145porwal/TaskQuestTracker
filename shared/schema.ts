@@ -1,0 +1,97 @@
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  points: integer("points").notNull().default(0),
+  streak: integer("streak").notNull().default(0),
+});
+
+export const tasks = pgTable("tasks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  points: integer("points").notNull(),
+  time: text("time"),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const rewards = pgTable("rewards", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  points: integer("points").notNull(),
+  icon: text("icon").notNull(),
+  color: text("color").notNull(),
+});
+
+export const redeemedRewards = pgTable("redeemed_rewards", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  rewardId: integer("reward_id").notNull(),
+  redeemedAt: timestamp("redeemed_at").notNull().defaultNow(),
+});
+
+export const completedTasks = pgTable("completed_tasks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  taskId: integer("task_id").notNull(),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+  pointsEarned: integer("points_earned").notNull(),
+});
+
+// Insert schemas
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
+
+export const insertTaskSchema = createInsertSchema(tasks).pick({
+  userId: true,
+  title: true,
+  description: true,
+  points: true,
+  time: true,
+});
+
+export const insertRewardSchema = createInsertSchema(rewards).pick({
+  userId: true,
+  title: true,
+  description: true,
+  points: true,
+  icon: true,
+  color: true,
+});
+
+export const insertRedeemedRewardSchema = createInsertSchema(redeemedRewards).pick({
+  userId: true,
+  rewardId: true,
+});
+
+export const insertCompletedTaskSchema = createInsertSchema(completedTasks).pick({
+  userId: true,
+  taskId: true,
+  pointsEarned: true,
+});
+
+// Types
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+
+export type InsertTask = z.infer<typeof insertTaskSchema>;
+export type Task = typeof tasks.$inferSelect;
+
+export type InsertReward = z.infer<typeof insertRewardSchema>;
+export type Reward = typeof rewards.$inferSelect;
+
+export type InsertRedeemedReward = z.infer<typeof insertRedeemedRewardSchema>;
+export type RedeemedReward = typeof redeemedRewards.$inferSelect;
+
+export type InsertCompletedTask = z.infer<typeof insertCompletedTaskSchema>;
+export type CompletedTask = typeof completedTasks.$inferSelect;
