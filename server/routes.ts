@@ -8,6 +8,8 @@ import {
   insertRedeemedRewardSchema,
   insertCompletedTaskSchema
 } from "@shared/schema";
+import { createOAuth2Client, getAuthUrl, getTokens, getUserInfo } from "./services/google-auth";
+import { getCalendarEvents, convertEventsToTasks } from "./services/google-calendar";
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req: Request, res: Response, next: NextFunction) {
@@ -369,6 +371,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     );
     
     res.json(topTasks);
+  });
+
+  // Google Auth routes
+  app.get('/api/google/auth', isAuthenticated, (req: Request, res: Response) => {
+    const oAuth2Client = createOAuth2Client();
+    const authUrl = getAuthUrl(oAuth2Client);
+    res.json({ authUrl });
+  });
+
+  app.get('/api/google/callback', async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.redirect('/auth?error=not_authenticated');
+    }
+
+    const { code } = req.query;
+    
+    if (!code || typeof code !== 'string') {
+      return res.redirect('/auth?error=invalid_code');
+    }
+
+    try {
+      const oAuth2Client = createOAuth2Client();
+      const tokens = await getTokens(oAuth2Client, code);
+      
+      // Set the credentials on the OAuth2 client
+      oAuth2Client.setCredentials(tokens);
+      
+      // Get user info from Google
+      const userInfo = await getUserInfo(oAuth2Client);
+      
+      // Store refresh token and user info in database
+      await storage.updateUserGoogleData(
+        req.user.id, 
+        tokens.refresh_token || null,
+        userInfo.emailAddresses?.[0]?.value || null,
+        userInfo.photos?.[0]?.url || null
+      );
+      
+      // Redirect to the calendar import page
+      res.redirect('/calendar/import');
+    } catch (error) {
+      console.error('Error during Google authentication:', error);
+      res.redirect('/auth?error=google_auth_failed');
+    }
+  });
+
+  // Google Calendar import route
+  app.get('/api/google/calendar/import', isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+    const user = await storage.getUser(userId);
+    
+    if (!user || !user.googleRefreshToken) {
+      return res.status(400).json({ error: 'Google account not connected' });
+    }
+    
+    try {
+      const oAuth2Client = createOAuth2Client();
+      
+      // Set the credentials using the refresh token
+      oAuth2Client.setCredentials({
+        refresh_token: user.googleRefreshToken
+      });
+      
+      // Get calendar events
+      const events = await getCalendarEvents(oAuth2Client);
+      
+      // Convert events to tasks
+      const tasks = convertEventsToTasks(events, userId);
+      
+      // Insert tasks into database
+      const createdTasks = await Promise.all(
+        tasks.map(task => storage.createTask(task))
+      );
+      
+      res.json({ 
+        success: true, 
+        message: `Imported ${createdTasks.length} events as tasks`, 
+        tasks: createdTasks 
+      });
+    } catch (error) {
+      console.error('Error importing Google Calendar events:', error);
+      res.status(500).json({ error: 'Failed to import calendar events' });
+    }
   });
 
   const httpServer = createServer(app);
