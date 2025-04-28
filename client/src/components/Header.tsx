@@ -11,7 +11,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Flame, Check, Star, User, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function Header() {
+interface HeaderProps {
+  title?: string;
+}
+
+export default function Header({ title }: HeaderProps) {
   const { user, tasks, openAddTaskModal } = useTaskContext();
   const [showNotifications, setShowNotifications] = useState(false);
   
@@ -83,7 +87,9 @@ export default function Header() {
               <div className="bg-gradient-to-tr from-primary to-secondary p-2 rounded-lg shadow-lg mr-3 hover-card">
                 <i className="ri-gamepad-line text-white text-xl"></i>
               </div>
-              <h1 className="text-xl font-bold font-outfit text-gradient">TaskQuest</h1>
+              <h1 className="text-xl font-bold font-outfit text-gradient">
+                {title || "TaskQuest"}
+              </h1>
             </div>
           </Link>
         </div>

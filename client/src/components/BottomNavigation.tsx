@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useTaskContext } from "@/context/TaskContext";
-import { BarChart3, Gift, History, ListTodo } from "lucide-react";
+import { BarChart3, Gift, History, ListTodo, Calendar } from "lucide-react";
 
 export default function BottomNavigation() {
   const [location] = useLocation();
@@ -9,7 +9,7 @@ export default function BottomNavigation() {
   const isActive = (path: string) => location === path;
   
   return (
-    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 glass-effect border border-white/20 shadow-lg rounded-full flex justify-around py-1 px-1 md:hidden z-10 max-w-xs mx-auto">
+    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 glass-effect border border-white/20 shadow-lg rounded-full flex justify-around py-1 px-1 md:hidden z-10 max-w-sm mx-auto">
       <Link href="/">
         <div 
           className={`flex flex-col items-center p-2 mx-1 rounded-full ${
@@ -21,6 +21,19 @@ export default function BottomNavigation() {
         >
           <ListTodo className={`h-5 w-5 ${isActive("/") ? "stroke-[2.5]" : ""}`} />
           <span className="text-xs mt-0.5 font-medium">Tasks</span>
+        </div>
+      </Link>
+      
+      <Link href="/calendar">
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/calendar") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+          } transition-all cursor-pointer`}
+        >
+          <Calendar className={`h-5 w-5 ${isActive("/calendar") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">Calendar</span>
         </div>
       </Link>
       
