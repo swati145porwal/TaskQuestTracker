@@ -1,31 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Gradient -->
-  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
-  
-  <!-- Crown Shape -->
-  <path d="M50 100L75 60L100 80L125 60L150 100V150H50V100Z" fill="#F6E05E" />
-  
-  <!-- Crown Points -->
-  <path d="M50 100L75 60L100 80L125 60L150 100" stroke="#D69E2E" stroke-width="5" />
-  
-  <!-- Crown Base -->
-  <rect x="45" y="135" width="110" height="15" fill="#D69E2E" />
-  
-  <!-- Jewels -->
-  <circle cx="75" cy="70" r="8" fill="#ED64A6" />
-  <circle cx="100" cy="90" r="8" fill="#4299E1" />
-  <circle cx="125" cy="70" r="8" fill="#48BB78" />
-  
-  <!-- Face -->
-  <circle cx="100" cy="120" r="12" fill="#1A202C" />
-  <path d="M85 120C85 120 90 130 115 130 115 130 110 120 85 120" fill="#1A202C" />
-  
-  <!-- Gradients -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
   <defs>
-    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
-      <stop stop-color="#ECC94B" />
-      <stop offset="1" stop-color="#B7791F" />
-    </radialGradient>
+    <linearGradient id="crownGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDD835" />
+      <stop offset="100%" stop-color="#F57F17" />
+    </linearGradient>
+    <linearGradient id="robeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9575CD" />
+      <stop offset="100%" stop-color="#5E35B1" />
+    </linearGradient>
+    <linearGradient id="gemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F44336" />
+      <stop offset="100%" stop-color="#C2185B" />
+    </linearGradient>
   </defs>
+  <circle cx="60" cy="60" r="56" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="2" />
+  <circle cx="60" cy="58" r="30" fill="#F3E5F5" />
+  
+  <!-- Royal Robe -->
+  <path d="M30 60C30 40 45 30 60 30C75 30 90 40 90 60V65C90 80 75 90 60 90C45 90 30 80 30 65V60Z" fill="url(#robeGradient)" />
+  
+  <!-- Royal Face -->
+  <circle cx="60" cy="60" r="15" fill="#FFE0B2" />
+  
+  <!-- Royal Eyes -->
+  <circle cx="55" cy="56" r="2" fill="#5D4037" />
+  <circle cx="65" cy="56" r="2" fill="#5D4037" />
+  
+  <!-- Royal Mouth -->
+  <path d="M55 65C57 67 63 67 65 65" stroke="#5D4037" stroke-width="1" fill="none" />
+  
+  <!-- Royal Crown -->
+  <path d="M45 40L50 45L60 35L70 45L75 40L70 50H50L45 40Z" fill="url(#crownGradient)" />
+  
+  <!-- Crown Gems -->
+  <circle cx="50" cy="42" r="2" fill="url(#gemGradient)" />
+  <circle cx="60" cy="38" r="2" fill="#4FC3F7" />
+  <circle cx="70" cy="42" r="2" fill="#9CCC65" />
+  
+  <!-- Royal Scepter -->
+  <line x1="85" y1="75" x2="75" y2="65" stroke="#5D4037" stroke-width="2" />
+  <circle cx="87" cy="77" r="3" fill="url(#crownGradient)" />
+  
+  <!-- Royal Neck Piece -->
+  <path d="M50 70V75H70V70" stroke="url(#crownGradient)" stroke-width="2" fill="none" />
+  <circle cx="60" cy="73" r="2" fill="url(#gemGradient)" />
 </svg>

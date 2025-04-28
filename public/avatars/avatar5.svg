@@ -1,39 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Gradient -->
-  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="alienGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64FFDA" />
+      <stop offset="100%" stop-color="#00BFA5" />
+    </linearGradient>
+    <linearGradient id="eyeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFF00" />
+      <stop offset="100%" stop-color="#FFD600" />
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#E0F2F1" stroke="#80CBC4" stroke-width="2" />
+  <circle cx="60" cy="58" r="30" fill="#E8F5E9" />
   
   <!-- Alien Head -->
-  <path d="M100 170C60 170 40 130 40 100C40 60 70 30 100 30C130 30 160 60 160 100C160 130 140 170 100 170Z" fill="#68D391" />
+  <path d="M35 60C35 45 45 30 60 30C75 30 85 45 85 60C85 75 75 85 60 85C45 85 35 75 35 60Z" fill="url(#alienGradient)" />
   
-  <!-- Large Eyes -->
-  <ellipse cx="75" cy="85" rx="20" ry="25" fill="#1A202C" />
-  <ellipse cx="125" cy="85" rx="20" ry="25" fill="#1A202C" />
+  <!-- Alien Eyes -->
+  <ellipse cx="50" cy="50" rx="8" ry="4" fill="#000000" />
+  <ellipse cx="70" cy="50" rx="8" ry="4" fill="#000000" />
   
-  <!-- Eye Reflection -->
-  <ellipse cx="70" cy="75" rx="8" ry="10" fill="#E2E8F0" />
-  <ellipse cx="120" cy="75" rx="8" ry="10" fill="#E2E8F0" />
+  <ellipse cx="50" cy="50" rx="4" ry="2" fill="url(#eyeGradient)" />
+  <ellipse cx="70" cy="50" rx="4" ry="2" fill="url(#eyeGradient)" />
   
-  <!-- Small Mouth -->
-  <ellipse cx="100" cy="130" rx="10" ry="5" fill="#1A202C" />
+  <!-- Alien Mouth -->
+  <path d="M50 70C55 75 65 75 70 70" stroke="#004D40" stroke-width="1.5" stroke-linecap="round" fill="none" />
   
-  <!-- Antennae -->
-  <line x1="85" y1="30" x2="75" y2="10" stroke="#1A202C" stroke-width="3" />
-  <line x1="115" y1="30" x2="125" y2="10" stroke="#1A202C" stroke-width="3" />
-  <circle cx="75" cy="5" r="5" fill="#FC8181" />
-  <circle cx="125" cy="5" r="5" fill="#FC8181" />
+  <!-- Alien Antennas -->
+  <path d="M55 30C55 20 50 15 45 15" stroke="#004D40" stroke-width="1.5" fill="none" />
+  <path d="M65 30C65 20 70 15 75 15" stroke="#004D40" stroke-width="1.5" fill="none" />
   
-  <!-- Spots -->
-  <circle cx="60" cy="130" r="5" fill="#38A169" />
-  <circle cx="140" cy="130" r="5" fill="#38A169" />
-  <circle cx="50" cy="100" r="5" fill="#38A169" />
-  <circle cx="150" cy="100" r="5" fill="#38A169" />
+  <circle cx="45" cy="15" r="2" fill="#E91E63" />
+  <circle cx="75" cy="15" r="2" fill="#E91E63" />
   
-  <!-- Gradients -->
-  <defs>
-    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
-      <stop stop-color="#48BB78" />
-      <stop offset="1" stop-color="#276749" />
-    </radialGradient>
-  </defs>
+  <!-- Alien Patterns -->
+  <circle cx="40" cy="40" r="1.5" fill="#004D40" />
+  <circle cx="80" cy="40" r="1.5" fill="#004D40" />
+  <circle cx="35" cy="65" r="1.5" fill="#004D40" />
+  <circle cx="85" cy="65" r="1.5" fill="#004D40" />
+  <circle cx="45" cy="80" r="1.5" fill="#004D40" />
+  <circle cx="75" cy="80" r="1.5" fill="#004D40" />
 </svg>

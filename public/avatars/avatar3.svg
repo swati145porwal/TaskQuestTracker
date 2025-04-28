@@ -1,37 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Gradient -->
-  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B0BEC5" />
+      <stop offset="100%" stop-color="#607D8B" />
+    </linearGradient>
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF" />
+      <stop offset="100%" stop-color="#0091EA" />
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#E0F7FA" stroke="#80DEEA" stroke-width="2" />
+  <circle cx="60" cy="58" r="30" fill="#E0F2F1" />
   
   <!-- Robot Head -->
-  <rect x="50" y="50" width="100" height="100" rx="20" fill="#A3BFFA" />
-  
-  <!-- Eyes -->
-  <circle cx="75" cy="85" r="15" fill="#1A202C" />
-  <circle cx="125" cy="85" r="15" fill="#1A202C" />
-  
-  <!-- Eye Lights -->
-  <circle cx="80" cy="80" r="5" fill="#EDF2F7" />
-  <circle cx="130" cy="80" r="5" fill="#EDF2F7" />
-  
-  <!-- Mouth -->
-  <rect x="70" y="120" width="60" height="10" rx="5" fill="#1A202C" />
+  <rect x="40" y="40" width="40" height="40" rx="6" fill="url(#metalGradient)" />
   
   <!-- Antenna -->
-  <line x1="100" y1="50" x2="100" y2="30" stroke="#1A202C" stroke-width="4" />
-  <circle cx="100" cy="25" r="8" fill="#FC8181" />
+  <line x1="60" y1="25" x2="60" y2="40" stroke="#78909C" stroke-width="2" />
+  <circle cx="60" cy="24" r="3" fill="#F44336" />
   
-  <!-- Bolts -->
-  <circle cx="50" cy="75" r="5" fill="#718096" />
-  <circle cx="50" cy="125" r="5" fill="#718096" />
-  <circle cx="150" cy="75" r="5" fill="#718096" />
-  <circle cx="150" cy="125" r="5" fill="#718096" />
+  <!-- Screen/Face -->
+  <rect x="45" y="45" width="30" height="20" rx="2" fill="url(#screenGradient)" />
   
-  <!-- Gradients -->
-  <defs>
-    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
-      <stop stop-color="#4299E1" />
-      <stop offset="1" stop-color="#2B6CB0" />
-    </radialGradient>
-  </defs>
+  <!-- Eyes -->
+  <circle cx="52" cy="55" r="2.5" fill="#FFFFFF" />
+  <circle cx="68" cy="55" r="2.5" fill="#FFFFFF" />
+  
+  <!-- Mouth/Speaker -->
+  <rect x="50" y="65" width="20" height="5" rx="2" fill="#455A64" />
+  <line x1="53" y1="67.5" x2="67" y2="67.5" stroke="#FFFFFF" stroke-width="1" />
+  
+  <!-- Buttons/Lights -->
+  <circle cx="36" cy="50" r="2" fill="#F44336" />
+  <circle cx="36" cy="60" r="2" fill="#4CAF50" />
+  <circle cx="36" cy="70" r="2" fill="#FFEB3B" />
+  
+  <circle cx="84" cy="50" r="2" fill="#F44336" />
+  <circle cx="84" cy="60" r="2" fill="#4CAF50" />
+  <circle cx="84" cy="70" r="2" fill="#FFEB3B" />
+  
+  <!-- Neck/Body Connection -->
+  <rect x="55" y="80" width="10" height="5" fill="#455A64" />
 </svg>

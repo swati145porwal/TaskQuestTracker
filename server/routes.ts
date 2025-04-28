@@ -61,6 +61,12 @@ function isAuthenticated(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from the public directory
+  app.use('/avatars', express.static(path.join(process.cwd(), 'public/avatars')));
+  
+  // Serve uploaded files
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  
   // Setup authentication
   setupAuth(app);
 

@@ -1,32 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Gradient -->
-  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
-  
-  <!-- Face -->
-  <circle cx="100" cy="100" r="70" fill="#FFBE98" />
-  
-  <!-- Eyes -->
-  <circle cx="70" cy="85" r="10" fill="#2D3748" />
-  <circle cx="130" cy="85" r="10" fill="#2D3748" />
-  
-  <!-- Sparkle in eyes -->
-  <circle cx="73" cy="82" r="3" fill="white" />
-  <circle cx="133" cy="82" r="3" fill="white" />
-  
-  <!-- Smile -->
-  <path d="M70 120C70 120 85 140 130 120" stroke="#2D3748" stroke-width="5" stroke-linecap="round" />
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9D4EDD" />
+      <stop offset="100%" stop-color="#6A0DAD" />
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#F9F7FD" stroke="#D4C1EC" stroke-width="2" />
+  <circle cx="60" cy="58" r="30" fill="#F4EBFF" />
   
   <!-- Hair -->
-  <path d="M100 30C60 30 45 70 35 80C35 80 50 30 100 30Z" fill="#805AD5" />
-  <path d="M100 30C140 30 155 70 165 80C165 80 150 30 100 30Z" fill="#805AD5" />
-  <path d="M35 80C35 80 30 50 40 40C50 30 70 20 100 20C130 20 150 30 160 40C170 50 165 80 165 80C165 80 150 60 100 60C50 60 35 80 35 80Z" fill="#805AD5" />
+  <path d="M30 58C30 41.4315 43.4315 28 60 28C76.5685 28 90 41.4315 90 58L90 65C90 81.5685 76.5685 95 60 95C43.4315 95 30 81.5685 30 65L30 58Z" fill="url(#purpleGradient)" />
   
-  <!-- Gradients -->
-  <defs>
-    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
-      <stop stop-color="#9F7AEA" />
-      <stop offset="1" stop-color="#4C1D95" />
-    </radialGradient>
-  </defs>
+  <!-- Face -->
+  <circle cx="60" cy="60" r="20" fill="#FFE0BD" />
+  
+  <!-- Eyes -->
+  <circle cx="50" cy="55" r="2.5" fill="#36383A" />
+  <circle cx="70" cy="55" r="2.5" fill="#36383A" />
+  
+  <!-- Eyebrows -->
+  <path d="M45.5 50C47.5 48 53 48 54.5 50" stroke="#36383A" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M65.5 50C67.5 48 73 48 74.5 50" stroke="#36383A" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Mouth -->
+  <path d="M53 68C55.5 70.5 64.5 70.5 67 68" stroke="#FF5C5C" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Blush -->
+  <circle cx="45" cy="62" r="3" fill="#FFAFAF" opacity="0.5" />
+  <circle cx="75" cy="62" r="3" fill="#FFAFAF" opacity="0.5" />
 </svg>
