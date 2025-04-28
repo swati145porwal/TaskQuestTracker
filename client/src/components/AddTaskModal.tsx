@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles } from "lucide-react";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, RepeatIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,6 +60,9 @@ export default function AddTaskModal() {
   const [taskCategory, setTaskCategory] = useState("Health");
   const [activeTab, setActiveTab] = useState("create");
   const [remindOnDate, setRemindOnDate] = useState(false);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringSchedule, setRecurringSchedule] = useState("daily");
+  const [showTimeOptions, setShowTimeOptions] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -261,32 +264,140 @@ export default function AddTaskModal() {
                 </div>
               </div>
               
-              <div className="pt-2 border-t border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">Set reminder</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setRemindOnDate(!remindOnDate)}
-                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out ${
-                      remindOnDate ? 'bg-primary border-primary' : 'bg-gray-200 border-gray-200'
-                    }`}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                        remindOnDate ? 'translate-x-4' : 'translate-x-0'
+              <div className="pt-3 border-t border-gray-100 space-y-3">
+                {/* Time Options Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm text-gray-600">Time options</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowTimeOptions(!showTimeOptions)}
+                      className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out ${
+                        showTimeOptions ? 'bg-primary border-primary' : 'bg-gray-200 border-gray-200'
                       }`}
-                    />
-                  </button>
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          showTimeOptions ? 'translate-x-4' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  
+                  <AnimatePresence>
+                    {showTimeOptions && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="bg-gray-50 p-3 rounded-md space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <RepeatIcon className="h-4 w-4 text-gray-500" />
+                              <span className="text-sm text-gray-600">Make it recurring</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setIsRecurring(!isRecurring)}
+                              className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out ${
+                                isRecurring ? 'bg-primary border-primary' : 'bg-gray-200 border-gray-200'
+                              }`}
+                            >
+                              <span
+                                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                  isRecurring ? 'translate-x-4' : 'translate-x-0'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                          
+                          {isRecurring && (
+                            <div className="grid grid-cols-4 gap-2 pt-2">
+                              {["daily", "weekly", "monthly", "custom"].map((option) => (
+                                <button
+                                  key={option}
+                                  type="button"
+                                  onClick={() => setRecurringSchedule(option)}
+                                  className={`text-xs p-2 rounded-md text-center transition-all capitalize ${
+                                    recurringSchedule === option 
+                                      ? 'bg-primary/20 text-primary font-medium' 
+                                      : 'bg-white border border-gray-200 text-gray-600 hover:border-primary/30'
+                                  }`}
+                                >
+                                  {option}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
                 
-                {remindOnDate && (
-                  <div className="mt-2 bg-gray-50 p-2 rounded-md text-xs text-gray-500">
-                    Reminder functionality will be available soon!
+                {/* Reminder Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm text-gray-600">Set reminder</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setRemindOnDate(!remindOnDate)}
+                      className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out ${
+                        remindOnDate ? 'bg-primary border-primary' : 'bg-gray-200 border-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          remindOnDate ? 'translate-x-4' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
                   </div>
-                )}
+                  
+                  <AnimatePresence>
+                    {remindOnDate && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <Label htmlFor="reminderDate" className="text-xs text-gray-500 mb-1">Date</Label>
+                              <Input
+                                id="reminderDate"
+                                type="date"
+                                className="h-8 text-xs"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="reminderTime" className="text-xs text-gray-500 mb-1">Time</Label>
+                              <Input
+                                id="reminderTime"
+                                type="time"
+                                className="h-8 text-xs"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-primary">
+                            <Sparkles className="h-3 w-3" />
+                            <span>We'll notify you when it's time!</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
               
               <DialogFooter className="mt-6 gap-2">

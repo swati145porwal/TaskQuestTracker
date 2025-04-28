@@ -2,8 +2,12 @@ import React, { useRef, useState } from "react";
 import { Task } from "@shared/schema";
 import { useTaskContext } from "@/context/TaskContext";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { CheckCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain } from "lucide-react";
-import { motion } from "framer-motion";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, RepeatIcon, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TaskCardProps {
   task: Task;
@@ -11,8 +15,14 @@ interface TaskCardProps {
 
 export default function TaskCard({ task }: TaskCardProps) {
   const { completeTask, deleteTask } = useTaskContext();
+  const { toast } = useToast();
   const checkboxRef = useRef<HTMLButtonElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [showFailAnimation, setShowFailAnimation] = useState(false);
+  const [editingPoints, setEditingPoints] = useState(false);
+  const [newPoints, setNewPoints] = useState(task.points.toString());
+  const [showActions, setShowActions] = useState(false);
   
   const handleCompleteTask = async (e: React.MouseEvent) => {
     if (task.isCompleted) return;
@@ -23,8 +33,44 @@ export default function TaskCard({ task }: TaskCardProps) {
         x: rect.right,
         y: rect.top
       };
-      await completeTask(task.id, position);
+      
+      setShowSuccessAnimation(true);
+      
+      // Success animation will show for 1.5 seconds before completing the task
+      setTimeout(async () => {
+        await completeTask(task.id, position);
+        setShowSuccessAnimation(false);
+      }, 1500);
     }
+  };
+  
+  const handleFailTask = () => {
+    setShowFailAnimation(true);
+    
+    // Show sad emoji animation for 2 seconds
+    setTimeout(() => {
+      setShowFailAnimation(false);
+      
+      // Show toast notification
+      toast({
+        title: "Task not completed",
+        description: "Don't worry, you can try again later!",
+        variant: "destructive",
+      });
+    }, 2000);
+  };
+  
+  const handleEditPoints = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Update points logic would go here
+    // For now we'll just show a toast notification
+    toast({
+      title: "Points updated",
+      description: `Task points updated to ${newPoints}`,
+    });
+    
+    setEditingPoints(false);
   };
   
   // Determine category and icon
@@ -152,17 +198,83 @@ export default function TaskCard({ task }: TaskCardProps) {
           </div>
           
           <div className="flex flex-col items-end ml-4">
-            <motion.div 
-              className={`${
-                task.isCompleted 
-                  ? "bg-gray-200 text-gray-500" 
-                  : "bg-gradient-to-r from-primary/20 to-primary shadow-sm"
-                } px-3 py-1.5 rounded-full text-xs font-bold flex items-center`}
-              whileHover={!task.isCompleted ? { scale: 1.05, y: -2 } : {}}
-            >
-              <Coins className={`h-3.5 w-3.5 ${task.isCompleted ? "text-gray-500" : "text-white"} mr-1`} />
-              <span className={task.isCompleted ? "text-gray-500" : "text-white"}>{task.points} pts</span>
-            </motion.div>
+            {editingPoints ? (
+              <form onSubmit={handleEditPoints} className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min="1"
+                  max="100"
+                  className="w-16 h-8 text-xs p-1"
+                  value={newPoints}
+                  onChange={(e) => setNewPoints(e.target.value)}
+                  autoFocus
+                />
+                <motion.button
+                  type="submit"
+                  className="bg-primary/20 text-primary rounded-full p-1.5"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Check className="h-3 w-3" />
+                </motion.button>
+              </form>
+            ) : (
+              <Popover open={showActions} onOpenChange={setShowActions}>
+                <PopoverTrigger asChild>
+                  <motion.div 
+                    className={`${
+                      task.isCompleted 
+                        ? "bg-gray-200 text-gray-500" 
+                        : "bg-gradient-to-r from-primary/20 to-primary shadow-sm"
+                      } px-3 py-1.5 rounded-full text-xs font-bold flex items-center cursor-pointer`}
+                    whileHover={!task.isCompleted ? { scale: 1.05, y: -2 } : {}}
+                    onClick={() => !task.isCompleted && setShowActions(true)}
+                  >
+                    <Coins className={`h-3.5 w-3.5 ${task.isCompleted ? "text-gray-500" : "text-white"} mr-1`} />
+                    <span className={task.isCompleted ? "text-gray-500" : "text-white"}>{task.points} pts</span>
+                  </motion.div>
+                </PopoverTrigger>
+                {!task.isCompleted && (
+                  <PopoverContent className="w-48 p-2" align="end">
+                    <div className="space-y-1">
+                      <motion.button
+                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        onClick={() => setEditingPoints(true)}
+                        whileHover={{ x: 2 }}
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-gray-600" />
+                        <span>Edit points</span>
+                      </motion.button>
+                      
+                      <motion.button
+                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        onClick={handleFailTask}
+                        whileHover={{ x: 2 }}
+                      >
+                        <XCircle className="h-3.5 w-3.5 text-destructive" />
+                        <span className="text-destructive">Failed to complete</span>
+                      </motion.button>
+                      
+                      <motion.button
+                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        whileHover={{ x: 2 }}
+                      >
+                        <Calendar className="h-3.5 w-3.5 text-gray-600" />
+                        <span>Set reminder</span>
+                      </motion.button>
+                      
+                      <motion.button
+                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        whileHover={{ x: 2 }}
+                      >
+                        <RepeatIcon className="h-3.5 w-3.5 text-gray-600" />
+                        <span>Make recurring</span>
+                      </motion.button>
+                    </div>
+                  </PopoverContent>
+                )}
+              </Popover>
+            )}
           </div>
         </div>
       </div>
@@ -179,6 +291,72 @@ export default function TaskCard({ task }: TaskCardProps) {
           />
         </div>
       )}
+      
+      {/* Success Animation Overlay */}
+      <AnimatePresence>
+        {showSuccessAnimation && (
+          <motion.div 
+            className="absolute inset-0 bg-success/10 backdrop-blur-sm rounded-xl flex items-center justify-center z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ 
+                scale: [0.5, 1.2, 1],
+                opacity: 1,
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="bg-success text-white rounded-full p-4 shadow-lg"
+            >
+              <CheckCircle className="h-12 w-12" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="absolute bottom-4 text-center bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-success"
+            >
+              Task completed! 🎉
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Failure Animation Overlay */}
+      <AnimatePresence>
+        {showFailAnimation && (
+          <motion.div 
+            className="absolute inset-0 bg-destructive/10 backdrop-blur-sm rounded-xl flex items-center justify-center z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ 
+                scale: [0.5, 1.2, 1],
+                opacity: 1,
+                rotate: [0, -5, 5, 0]
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="bg-destructive text-white rounded-full p-4 shadow-lg"
+            >
+              <XCircle className="h-12 w-12" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              className="absolute bottom-4 text-center bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-destructive"
+            >
+              We'll try again later 😢
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <motion.div 
         initial={{ opacity: 0 }}
