@@ -91,6 +91,7 @@
   }
   
   .dark body {
+    background-color: hsl(222 47% 5%);
     background-image: 
       radial-gradient(circle at top right, rgba(138, 43, 226, 0.08), transparent 40%),
       radial-gradient(circle at bottom left, rgba(30, 144, 255, 0.08), transparent 40%);
@@ -127,6 +128,15 @@
   
   .reward-card {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 1) 0%, 
+      rgba(252, 250, 255, 1) 100%);
+  }
+  
+  .dark .reward-card {
+    background: linear-gradient(135deg, 
+      rgba(30, 30, 36, 1) 0%, 
+      rgba(26, 26, 32, 1) 100%);
   }
   
   /* Custom button styles */

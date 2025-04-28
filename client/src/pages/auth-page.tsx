@@ -238,7 +238,7 @@ export default function AuthPage() {
       </div>
       
       {/* Right Side - Hero/Information Section */}
-      <div className="hidden md:flex md:w-1/2 p-6 bg-gradient-to-br from-primary/20 to-secondary/20 items-center justify-center">
+      <div className="hidden md:flex md:w-1/2 p-6 bg-gradient-to-br from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 items-center justify-center">
         <div className="max-w-lg space-y-6 p-6">
           <div className="text-center">
             <motion.h2 
@@ -250,7 +250,7 @@ export default function AuthPage() {
               Gamify Your Routine
             </motion.h2>
             <motion.p 
-              className="mt-2 text-gray-700"
+              className="mt-2 text-gray-700 dark:text-gray-300"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -284,17 +284,17 @@ export default function AuthPage() {
             ].map((feature, index) => (
               <motion.div 
                 key={index}
-                className="flex items-start space-x-3 p-4 rounded-lg bg-white/80 backdrop-blur-sm shadow-sm"
+                className="flex items-start space-x-3 p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.3 + (index * 0.1) }}
               >
-                <div className="flex-shrink-0 p-1.5 rounded-full bg-gray-100">
+                <div className="flex-shrink-0 p-1.5 rounded-full bg-gray-100 dark:bg-gray-700">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="font-medium">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
+                  <h3 className="font-medium dark:text-white">{feature.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{feature.description}</p>
                 </div>
               </motion.div>
             ))}

@@ -56,7 +56,7 @@ export default function BottomNavigation() {
           className={`flex flex-col items-center p-2 mx-1 rounded-full ${
             isActive("/stats") 
               ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
-              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+              : "text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary dark:hover:text-primary"
           } transition-all cursor-pointer`}
           onClick={() => setActiveTab("stats")}
         >
@@ -70,7 +70,7 @@ export default function BottomNavigation() {
           className={`flex flex-col items-center p-2 mx-1 rounded-full ${
             isActive("/history") 
               ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
-              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+              : "text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary dark:hover:text-primary"
           } transition-all cursor-pointer`}
           onClick={() => setActiveTab("history")}
         >
