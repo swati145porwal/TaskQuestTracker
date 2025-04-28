@@ -11,6 +11,7 @@ import RewardsPage from "@/pages/RewardsPage";
 import StatsPage from "@/pages/StatsPage";
 import HistoryPage from "@/pages/HistoryPage";
 import CalendarPage from "@/pages/CalendarPage";
+import CalendarImportPage from "@/pages/CalendarImportPage";
 import AuthPage from "@/pages/auth-page";
 import PointsAnimation from "@/components/PointsAnimation";
 import { TaskProvider } from "./context/TaskContext";
@@ -54,6 +55,7 @@ function AppRouter() {
     <Switch>
       <ProtectedRoute path="/" component={TasksPage} />
       <ProtectedRoute path="/calendar" component={CalendarPage} />
+      <ProtectedRoute path="/calendar/import" component={CalendarImportPage} />
       <ProtectedRoute path="/rewards" component={RewardsPage} />
       <ProtectedRoute path="/stats" component={StatsPage} />
       <ProtectedRoute path="/history" component={HistoryPage} />

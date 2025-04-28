@@ -20,6 +20,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUserPoints(userId: number, points: number): Promise<User | undefined>;
   updateUserStreak(userId: number, streak: number): Promise<User | undefined>;
+  updateUserGoogleData(userId: number, refreshToken: string | null, email: string | null, pictureUrl: string | null): Promise<User | undefined>;
   
   // Task methods
   getTasks(userId: number): Promise<Task[]>;
@@ -86,6 +87,19 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .update(users)
       .set({ streak })
+      .where(eq(users.id, userId))
+      .returning();
+    return result[0];
+  }
+
+  async updateUserGoogleData(userId: number, refreshToken: string | null, email: string | null, pictureUrl: string | null): Promise<User | undefined> {
+    const result = await db
+      .update(users)
+      .set({ 
+        googleRefreshToken: refreshToken,
+        googleEmail: email,
+        googlePictureUrl: pictureUrl 
+      })
       .where(eq(users.id, userId))
       .returning();
     return result[0];

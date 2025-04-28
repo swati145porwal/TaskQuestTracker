@@ -176,7 +176,7 @@ export default function TasksPage() {
           <Button 
             onClick={openAddTaskModal} 
             size="lg"
-            className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all duration-300 animate-pulse"
+            className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all duration-300"
           >
             <PlusCircle className="mr-2 h-5 w-5" />
             Create Your First Task
