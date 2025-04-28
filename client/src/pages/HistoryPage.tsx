@@ -132,7 +132,7 @@ export default function HistoryPage() {
                 {tasks.map(task => (
                   <div key={task.id} className="p-4 flex items-center">
                     <div className="w-10 h-10 flex items-center justify-center bg-success-100 text-success-600 rounded-md">
-                      <i className="ri-check-line"></i>
+                      <CheckCircle className="h-5 w-5" />
                     </div>
                     <div className="ml-3 flex-grow">
                       <h4 className="text-gray-800 font-medium">{task.task?.title}</h4>
@@ -140,9 +140,12 @@ export default function HistoryPage() {
                         {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <div className="flex items-center bg-gray-100 px-2 py-1 rounded-full">
-                      <i className="ri-coin-line text-gray-600 mr-1"></i>
-                      <span className="text-gray-700 text-sm">{task.pointsEarned} pts</span>
+                    <div className="flex gap-2 items-center">
+                      <TaskProofManager completedTaskId={task.id} />
+                      <div className="flex items-center bg-gray-100 px-2 py-1 rounded-full">
+                        <Coins className="h-3.5 w-3.5 text-gray-600 mr-1" />
+                        <span className="text-gray-700 text-sm">{task.pointsEarned} pts</span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -151,12 +154,14 @@ export default function HistoryPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 bg-gray-50 rounded-xl">
-          <div className="text-gray-400 mb-2">
-            <i className="ri-history-line text-3xl"></i>
+        <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="text-gray-400 mb-4">
+            <CheckCircle className="h-12 w-12 mx-auto opacity-20" />
           </div>
-          <h3 className="text-gray-700 font-medium mb-1">No history yet</h3>
-          <p className="text-gray-500 text-sm">Complete tasks to see your history</p>
+          <h3 className="text-gray-700 font-medium mb-2">No history yet</h3>
+          <p className="text-gray-500 text-sm max-w-xs mx-auto">
+            Complete tasks to see your history and add proof of completion
+          </p>
         </div>
       )}
     </div>

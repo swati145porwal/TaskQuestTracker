@@ -6,6 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { TaskProof } from "@shared/schema";
 
+// For typechecking with the actual field names from the schema
+interface TaskProofWithDetails extends TaskProof {
+  uploadedAt: Date;
+}
+
 interface TaskProofDisplayProps {
   completedTaskId: number;
   onProofDeleted: () => void;
@@ -13,7 +18,7 @@ interface TaskProofDisplayProps {
 
 export default function TaskProofDisplay({ completedTaskId, onProofDeleted }: TaskProofDisplayProps) {
   const { toast } = useToast();
-  const [proofs, setProofs] = useState<TaskProof[]>([]);
+  const [proofs, setProofs] = useState<TaskProofWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   
