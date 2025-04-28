@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { useTaskContext } from "@/context/TaskContext";
+import { useAuth } from "@/hooks/use-auth";
 import PointsDisplay from "./PointsDisplay";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Flame, Check, Star, User, Plus, X } from "lucide-react";
+import { Bell, Flame, Check, Star, User, Plus, X, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
@@ -17,7 +26,18 @@ interface HeaderProps {
 
 export default function Header({ title }: HeaderProps) {
   const { user, tasks, openAddTaskModal } = useTaskContext();
+  const { logoutMutation } = useAuth();
+  const [, navigate] = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
+  
+  const handleSignOut = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+    }
+  };
   
   // Generate notifications based on streak and completed tasks
   const generateNotifications = () => {
@@ -165,32 +185,50 @@ export default function Header({ title }: HeaderProps) {
             </PopoverContent>
           </Popover>
           
-          {/* User Profile */}
-          <Link href="/stats">
-            <motion.div 
-              className="relative cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 w-10 h-10 flex items-center justify-center shadow-md border border-white/50">
-                {user?.username ? (
-                  <span className="text-primary font-medium">{user.username[0]}</span>
-                ) : (
-                  <User className="h-5 w-5 text-primary" />
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <motion.div 
+                className="relative cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 w-10 h-10 flex items-center justify-center shadow-md border border-white/50">
+                  {user?.username ? (
+                    <span className="text-primary font-medium">{user.username[0]}</span>
+                  ) : (
+                    <User className="h-5 w-5 text-primary" />
+                  )}
+                </div>
+                {user?.streak && user.streak > 0 && (
+                  <motion.div 
+                    className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    {user.streak}
+                  </motion.div>
                 )}
-              </div>
-              {user?.streak && user.streak > 0 && (
-                <motion.div 
-                  className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  {user.streak}
-                </motion.div>
-              )}
-            </motion.div>
-          </Link>
+              </motion.div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                {user?.username ? `Hi, ${user.username}` : 'My Account'}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Link href="/stats">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Settings className="h-4 w-4 mr-2" />
+                  <span>Profile & Stats</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                <span>Sign Out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
