@@ -1,50 +1,69 @@
 import { Link, useLocation } from "wouter";
 import { useTaskContext } from "@/context/TaskContext";
+import { BarChart3, Gift, History, ListTodo } from "lucide-react";
 
 export default function BottomNavigation() {
   const [location] = useLocation();
   const { setActiveTab } = useTaskContext();
   
+  const isActive = (path: string) => location === path;
+  
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 md:hidden">
+    <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 glass-effect border border-white/20 shadow-lg rounded-full flex justify-around py-1 px-1 md:hidden z-10 max-w-xs mx-auto">
       <Link href="/">
-        <a 
-          className={`flex flex-col items-center p-2 ${location === "/" ? "text-primary-500" : "text-gray-400"}`}
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+          } transition-all cursor-pointer`}
           onClick={() => setActiveTab("tasks")}
         >
-          <i className="ri-list-check text-xl"></i>
-          <span className="text-xs mt-1">Tasks</span>
-        </a>
+          <ListTodo className={`h-5 w-5 ${isActive("/") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">Tasks</span>
+        </div>
       </Link>
       
       <Link href="/rewards">
-        <a 
-          className={`flex flex-col items-center p-2 ${location === "/rewards" ? "text-primary-500" : "text-gray-400"}`}
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/rewards") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+          } transition-all cursor-pointer`}
           onClick={() => setActiveTab("rewards")}
         >
-          <i className="ri-gift-line text-xl"></i>
-          <span className="text-xs mt-1">Rewards</span>
-        </a>
+          <Gift className={`h-5 w-5 ${isActive("/rewards") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">Rewards</span>
+        </div>
       </Link>
       
       <Link href="/stats">
-        <a 
-          className={`flex flex-col items-center p-2 ${location === "/stats" ? "text-primary-500" : "text-gray-400"}`}
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/stats") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+          } transition-all cursor-pointer`}
           onClick={() => setActiveTab("stats")}
         >
-          <i className="ri-bar-chart-line text-xl"></i>
-          <span className="text-xs mt-1">Stats</span>
-        </a>
+          <BarChart3 className={`h-5 w-5 ${isActive("/stats") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">Stats</span>
+        </div>
       </Link>
       
       <Link href="/history">
-        <a 
-          className={`flex flex-col items-center p-2 ${location === "/history" ? "text-primary-500" : "text-gray-400"}`}
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/history") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 hover:bg-primary/10 hover:text-primary"
+          } transition-all cursor-pointer`}
           onClick={() => setActiveTab("history")}
         >
-          <i className="ri-history-line text-xl"></i>
-          <span className="text-xs mt-1">History</span>
-        </a>
+          <History className={`h-5 w-5 ${isActive("/history") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">History</span>
+        </div>
       </Link>
     </nav>
   );
