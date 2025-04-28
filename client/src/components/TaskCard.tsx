@@ -6,8 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReminderSettings from "./ReminderSettings";
 
 interface TaskCardProps {
   task: Task;
@@ -23,6 +24,7 @@ export default function TaskCard({ task }: TaskCardProps) {
   const [editingPoints, setEditingPoints] = useState(false);
   const [newPoints, setNewPoints] = useState(task.points.toString());
   const [showActions, setShowActions] = useState(false);
+  const [isReminderOpen, setIsReminderOpen] = useState(false);
   
   const handleCompleteTask = async (e: React.MouseEvent) => {
     if (task.isCompleted) return;
@@ -257,9 +259,13 @@ export default function TaskCard({ task }: TaskCardProps) {
                       
                       <motion.button
                         className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        onClick={() => {
+                          setIsReminderOpen(true);
+                          setShowActions(false);
+                        }}
                         whileHover={{ x: 2 }}
                       >
-                        <Calendar className="h-3.5 w-3.5 text-gray-600" />
+                        <Bell className="h-3.5 w-3.5 text-gray-600" />
                         <span>Set reminder</span>
                       </motion.button>
                       
@@ -407,6 +413,13 @@ export default function TaskCard({ task }: TaskCardProps) {
           </AlertDialogContent>
         </AlertDialog>
       </motion.div>
+      
+      {/* Reminder Settings Dialog */}
+      <ReminderSettings
+        open={isReminderOpen}
+        onOpenChange={setIsReminderOpen}
+        task={task}
+      />
     </motion.div>
   );
 }
