@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import type { Task, Reward, User, RedeemedReward } from "@shared/schema";
 
 type TabType = "tasks" | "rewards" | "stats" | "history";
@@ -33,7 +34,6 @@ interface TaskContextType {
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export function TaskProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [redeemedRewards, setRedeemedRewards] = useState<(RedeemedReward & { reward?: Reward })[]>([]);
@@ -45,23 +45,22 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const [pointsAnimationPosition, setPointsAnimationPosition] = useState({ x: 0, y: 0 });
   
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  // Fetch initial data
+  // Fetch initial data when the user is authenticated
   useEffect(() => {
-    refreshData();
-  }, []);
+    if (user) {
+      refreshData();
+    }
+  }, [user]);
 
   const refreshData = async () => {
+    if (!user) return;
+    
     try {
-      const userResponse = await fetch("/api/user");
       const tasksResponse = await fetch("/api/tasks");
       const rewardsResponse = await fetch("/api/rewards");
       const redeemedRewardsResponse = await fetch("/api/redeemed-rewards");
-      
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUser(userData);
-      }
       
       if (tasksResponse.ok) {
         const tasksData = await tasksResponse.json();

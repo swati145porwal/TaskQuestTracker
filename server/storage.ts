@@ -44,11 +44,11 @@ export interface IStorage {
   createCompletedTask(completedTask: InsertCompletedTask): Promise<CompletedTask>;
 
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Type as 'any' to avoid import issues
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({ 

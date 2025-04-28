@@ -11,40 +11,53 @@ import RewardsPage from "@/pages/RewardsPage";
 import StatsPage from "@/pages/StatsPage";
 import HistoryPage from "@/pages/HistoryPage";
 import CalendarPage from "@/pages/CalendarPage";
+import AuthPage from "@/pages/auth-page";
 import PointsAnimation from "@/components/PointsAnimation";
 import { TaskProvider } from "./context/TaskContext";
+import { AuthProvider } from "./hooks/use-auth";
+import { ProtectedRoute } from "./lib/protected-route";
 
 function App() {
   return (
-    <TaskProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
-              <AppRouter />
-            </main>
-            <BottomNavigation />
-            <PointsAnimation />
-            <Toaster />
-          </div>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </TaskProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TaskProvider>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </TaskProvider>
+      </AuthProvider>
+      <Toaster />
+    </QueryClientProvider>
+  );
+}
+
+function AppContent() {
+  const [location] = useLocation();
+  const isAuthPage = location === "/auth";
+  
+  return (
+    <div className="min-h-screen flex flex-col">
+      {!isAuthPage && <Header />}
+      <main className={`flex-grow w-full mx-auto ${!isAuthPage ? 'max-w-7xl px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6' : ''}`}>
+        <AppRouter />
+      </main>
+      {!isAuthPage && <BottomNavigation />}
+      <PointsAnimation />
+    </div>
   );
 }
 
 // Move the Router component inside the App component to ensure it's wrapped by TaskProvider
 function AppRouter() {
-  const [location] = useLocation();
-  
   return (
     <Switch>
-      <Route path="/" component={TasksPage} />
-      <Route path="/calendar" component={CalendarPage} />
-      <Route path="/rewards" component={RewardsPage} />
-      <Route path="/stats" component={StatsPage} />
-      <Route path="/history" component={HistoryPage} />
+      <ProtectedRoute path="/" component={TasksPage} />
+      <ProtectedRoute path="/calendar" component={CalendarPage} />
+      <ProtectedRoute path="/rewards" component={RewardsPage} />
+      <ProtectedRoute path="/stats" component={StatsPage} />
+      <ProtectedRoute path="/history" component={HistoryPage} />
+      <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
   );
