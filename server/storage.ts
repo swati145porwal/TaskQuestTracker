@@ -4,7 +4,8 @@ import {
   rewards, type Reward, type InsertReward,
   redeemedRewards, type RedeemedReward, type InsertRedeemedReward,
   completedTasks, type CompletedTask, type InsertCompletedTask,
-  taskProofs, type TaskProof, type InsertTaskProof
+  taskProofs, type TaskProof, type InsertTaskProof,
+  avatars, type Avatar, type InsertAvatar
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, between } from "drizzle-orm";
@@ -22,6 +23,13 @@ export interface IStorage {
   updateUserPoints(userId: number, points: number): Promise<User | undefined>;
   updateUserStreak(userId: number, streak: number): Promise<User | undefined>;
   updateUserGoogleData(userId: number, refreshToken: string | null, email: string | null, pictureUrl: string | null): Promise<User | undefined>;
+  updateUserAvatar(userId: number, avatarId: number): Promise<User | undefined>;
+  
+  // Avatar methods
+  getAvatars(): Promise<Avatar[]>;
+  getAvatar(id: number): Promise<Avatar | undefined>;
+  getAvatarsByStreakRequirement(streak: number): Promise<Avatar[]>;
+  createAvatar(avatar: InsertAvatar): Promise<Avatar>;
   
   // Task methods
   getTasks(userId: number): Promise<Task[]>;
@@ -108,6 +116,46 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(users.id, userId))
       .returning();
+    return result[0];
+  }
+
+  async updateUserAvatar(userId: number, avatarId: number): Promise<User | undefined> {
+    const result = await db
+      .update(users)
+      .set({ currentAvatarId: avatarId })
+      .where(eq(users.id, userId))
+      .returning();
+    return result[0];
+  }
+  
+  // Avatar methods
+  async getAvatars(): Promise<Avatar[]> {
+    return db.select().from(avatars).orderBy(avatars.streakRequired);
+  }
+  
+  async getAvatar(id: number): Promise<Avatar | undefined> {
+    const result = await db.select().from(avatars).where(eq(avatars.id, id));
+    return result[0];
+  }
+  
+  async getAvatarsByStreakRequirement(streak: number): Promise<Avatar[]> {
+    return db
+      .select()
+      .from(avatars)
+      .where(
+        and(
+          eq(avatars.streakRequired, streak),
+          eq(avatars.isDefault, false)
+        )
+      );
+  }
+  
+  async createAvatar(insertAvatar: InsertAvatar): Promise<Avatar> {
+    const result = await db.insert(avatars).values({
+      ...insertAvatar,
+      description: insertAvatar.description || null,
+      category: insertAvatar.category || null
+    }).returning();
     return result[0];
   }
 

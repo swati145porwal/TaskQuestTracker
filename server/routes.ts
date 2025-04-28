@@ -7,7 +7,8 @@ import {
   insertRewardSchema, 
   insertRedeemedRewardSchema,
   insertCompletedTaskSchema,
-  insertTaskProofSchema
+  insertTaskProofSchema,
+  insertAvatarSchema
 } from "@shared/schema";
 import { createOAuth2Client, getAuthUrl, getTokens, getUserInfo } from "./services/google-auth";
 import { getCalendarEvents, convertEventsToTasks } from "./services/google-calendar";
