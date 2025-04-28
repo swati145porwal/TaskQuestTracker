@@ -180,30 +180,55 @@ export default function TaskCard({ task }: TaskCardProps) {
         </div>
       )}
       
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <button 
-            className="absolute top-2 right-2 text-gray-400 hover:text-destructive transition-colors p-2 rounded-full hover:bg-destructive/10"
-            aria-label="Delete task"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Task</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this task? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteTask(task.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        className="absolute top-3 right-3"
+      >
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <motion.button 
+              className="text-gray-400 hover:text-destructive transition-colors p-2 rounded-full hover:bg-destructive/10 bg-white shadow-sm"
+              aria-label="Delete task"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </motion.button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-xl text-gradient font-bold">Delete Task</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{task.title}"? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-3">
+                <div className="bg-destructive/5 p-3 rounded-lg border border-destructive/10 text-sm text-gray-600">
+                  Deleting this task will remove it permanently from your task list. All progress related to this task will be lost.
+                </div>
+              </div>
+              <AlertDialogFooter className="gap-2">
+                <AlertDialogCancel className="hover:bg-gray-100">Cancel</AlertDialogCancel>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <AlertDialogAction 
+                    onClick={() => deleteTask(task.id)} 
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete Task
+                  </AlertDialogAction>
+                </motion.div>
+              </AlertDialogFooter>
+            </motion.div>
+          </AlertDialogContent>
+        </AlertDialog>
+      </motion.div>
     </motion.div>
   );
 }

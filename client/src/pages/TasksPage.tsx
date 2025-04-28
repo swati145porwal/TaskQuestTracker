@@ -6,6 +6,7 @@ import AddTaskModal from "@/components/AddTaskModal";
 import { calculateProgress } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Flame, ListChecks, PlusCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TasksPage() {
   const { tasks, user, openAddTaskModal } = useTaskContext();
@@ -234,13 +235,56 @@ export default function TasksPage() {
         </>
       )}
       
-      {/* Add Task Button */}
-      <button 
+      {/* Add Task Buttons */}
+      <motion.button 
         className="fixed bottom-20 right-6 md:bottom-8 md:right-8 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-primary/30 transition-all add-button"
         onClick={openAddTaskModal}
+        whileHover={{ scale: 1.1, rotate: 5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+        whileTap={{ scale: 0.95 }}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
+        transition={{ 
+          type: "spring",
+          damping: 10,
+          stiffness: 200,
+          delay: 0.2
+        }}
       >
         <PlusCircle className="h-7 w-7" />
-      </button>
+      </motion.button>
+      
+      {/* Add Task Label - Only visible on first visit or when no tasks */}
+      {tasks.length < 3 && (
+        <motion.div 
+          className="fixed bottom-36 right-6 md:bottom-24 md:right-8 bg-white px-4 py-2 rounded-full shadow-lg border border-primary/10"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ delay: 0.5, duration: 0.3 }}
+        >
+          <div className="text-xs text-gray-700 font-medium flex items-center">
+            <span>Create a new task</span>
+            <motion.svg 
+              width="20" 
+              height="20" 
+              viewBox="0 0 20 20" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="ml-2"
+              animate={{ 
+                y: [0, 5, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <path d="M14 10L10 14L6 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </motion.svg>
+          </div>
+        </motion.div>
+      )}
       
       <AddTaskModal />
     </div>

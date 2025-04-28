@@ -175,23 +175,54 @@ export default function RewardCard({ reward }: RewardCardProps) {
           
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-destructive hover:bg-destructive/10 p-2 rounded-full">
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <motion.div whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:text-destructive hover:bg-destructive/10 p-2 rounded-full bg-white/75 shadow-sm"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </motion.div>
             </AlertDialogTrigger>
             <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Reward</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete this reward? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteReward(reward.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-xl text-gradient font-bold">Delete Reward</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete "{reward.title}"? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-3">
+                  <div className="bg-destructive/5 p-3 rounded-lg border border-destructive/10 text-sm">
+                    <p className="text-gray-600 mb-2">
+                      This reward will be permanently removed from your rewards list.
+                    </p>
+                    {hasEnoughPoints && (
+                      <div className="text-amber-600 text-xs bg-amber-50 p-2 rounded border border-amber-100">
+                        <Trophy className="h-3.5 w-3.5 inline-block mr-1" /> 
+                        You have enough points to redeem this reward. Consider redeeming it before deleting.
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <AlertDialogFooter className="gap-2">
+                  <AlertDialogCancel className="hover:bg-gray-100">Cancel</AlertDialogCancel>
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <AlertDialogAction 
+                      onClick={() => deleteReward(reward.id)} 
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete Reward
+                    </AlertDialogAction>
+                  </motion.div>
+                </AlertDialogFooter>
+              </motion.div>
             </AlertDialogContent>
           </AlertDialog>
         </div>

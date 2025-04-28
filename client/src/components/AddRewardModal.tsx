@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { getRandomGradient, rewardIcons, gradientColors } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import { Gift, Sparkles, Star, Trophy } from "lucide-react";
 
 export default function AddRewardModal() {
   const { isAddRewardModalOpen, closeAddRewardModal, addReward } = useTaskContext();
@@ -160,16 +162,55 @@ export default function AddRewardModal() {
             </div>
           </div>
           
-          <div className="rounded-lg overflow-hidden border border-gray-200 mt-4">
-            <div className={`h-16 bg-gradient-to-r ${rewardColor} flex items-center justify-center`}>
-              <i className={`${rewardIcon} text-white text-2xl`}></i>
+          <motion.div 
+            className="rounded-lg overflow-hidden border border-gray-200 mt-4 shadow-sm"
+            whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
+            <div className={`h-20 bg-gradient-to-r ${rewardColor} flex items-center justify-center`}>
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                <i className={`${rewardIcon} text-white text-3xl`}></i>
+              </motion.div>
             </div>
-            <div className="p-2 text-center text-sm text-gray-500">Preview</div>
-          </div>
+            <div className="p-3 flex justify-between items-center bg-white">
+              <div className="text-sm font-medium text-gray-700">Preview</div>
+              <div className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
+                {rewardPoints ? `${rewardPoints} points` : "Set points"}
+              </div>
+            </div>
+          </motion.div>
           
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Add Reward</Button>
+          <DialogFooter className="mt-6 gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleClose}
+              className="hover:bg-gray-100"
+            >
+              Cancel
+            </Button>
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <Button 
+                type="submit"
+                className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-md font-medium gap-2"
+              >
+                <Trophy className="h-4 w-4" />
+                Create Reward
+              </Button>
+            </motion.div>
           </DialogFooter>
         </form>
       </DialogContent>
