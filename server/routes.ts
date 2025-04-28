@@ -1,6 +1,7 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth } from "./auth";
 import { 
   insertTaskSchema, 
   insertRewardSchema, 
@@ -8,33 +9,30 @@ import {
   insertCompletedTaskSchema
 } from "@shared/schema";
 
+// Middleware to check if user is authenticated
+function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ error: "You must be logged in to access this resource" });
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // User routes
-  app.get("/api/user", async (req: Request, res: Response) => {
-    // For demo purposes, return the first user (demo user)
-    const user = await storage.getUser(1);
-    
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    
-    // Remove password from response
-    const { password, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
-  });
+  // Setup authentication
+  setupAuth(app);
+
+  // User routes - now handled by auth.ts
 
   // Task routes
-  app.get("/api/tasks", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/tasks", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     const tasks = await storage.getTasks(userId);
     res.json(tasks);
   });
 
-  app.post("/api/tasks", async (req: Request, res: Response) => {
+  app.post("/api/tasks", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // For demo, use the demo user (id=1)
-      const userId = 1;
+      const userId = req.user!.id;
       
       const taskData = { ...req.body, userId };
       const parsedTask = insertTaskSchema.parse(taskData);
@@ -46,9 +44,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/tasks/:id/complete", async (req: Request, res: Response) => {
+  app.put("/api/tasks/:id/complete", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
+      const userId = req.user!.id;
       
       if (isNaN(taskId)) {
         return res.status(400).json({ error: "Invalid task ID" });
@@ -58,6 +57,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!task) {
         return res.status(404).json({ error: "Task not found" });
+      }
+      
+      // Ensure user owns this task
+      if (task.userId !== userId) {
+        return res.status(403).json({ error: "You don't have permission to complete this task" });
       }
       
       if (task.isCompleted) {
@@ -90,12 +94,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
+  app.delete("/api/tasks/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);
+      const userId = req.user!.id;
       
       if (isNaN(taskId)) {
         return res.status(400).json({ error: "Invalid task ID" });
+      }
+      
+      // Ensure user owns this task
+      const task = await storage.getTask(taskId);
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+      
+      if (task.userId !== userId) {
+        return res.status(403).json({ error: "You don't have permission to delete this task" });
       }
       
       const deleted = await storage.deleteTask(taskId);
@@ -111,17 +126,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Reward routes
-  app.get("/api/rewards", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/rewards", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     const rewards = await storage.getRewards(userId);
     res.json(rewards);
   });
 
-  app.post("/api/rewards", async (req: Request, res: Response) => {
+  app.post("/api/rewards", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // For demo, use the demo user (id=1)
-      const userId = 1;
+      const userId = req.user!.id;
       
       const rewardData = { ...req.body, userId };
       const parsedReward = insertRewardSchema.parse(rewardData);
@@ -133,16 +146,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/rewards/:id/redeem", async (req: Request, res: Response) => {
+  app.post("/api/rewards/:id/redeem", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const rewardId = parseInt(req.params.id);
+      const userId = req.user!.id;
       
       if (isNaN(rewardId)) {
         return res.status(400).json({ error: "Invalid reward ID" });
       }
       
-      // For demo, use the demo user (id=1)
-      const userId = 1;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -153,6 +165,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!reward) {
         return res.status(404).json({ error: "Reward not found" });
+      }
+      
+      // Ensure user owns this reward
+      if (reward.userId !== userId) {
+        return res.status(403).json({ error: "You don't have permission to redeem this reward" });
       }
       
       if (user.points < reward.points) {
@@ -181,12 +198,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/rewards/:id", async (req: Request, res: Response) => {
+  app.delete("/api/rewards/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const rewardId = parseInt(req.params.id);
+      const userId = req.user!.id;
       
       if (isNaN(rewardId)) {
         return res.status(400).json({ error: "Invalid reward ID" });
+      }
+      
+      // Ensure user owns this reward
+      const reward = await storage.getReward(rewardId);
+      if (!reward) {
+        return res.status(404).json({ error: "Reward not found" });
+      }
+      
+      if (reward.userId !== userId) {
+        return res.status(403).json({ error: "You don't have permission to delete this reward" });
       }
       
       const deleted = await storage.deleteReward(rewardId);
@@ -202,9 +230,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Redeemed rewards routes
-  app.get("/api/redeemed-rewards", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/redeemed-rewards", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     const redeemedRewards = await storage.getRedeemedRewards(userId);
     
     // Get the reward details for each redeemed reward
@@ -222,9 +249,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Completed tasks routes
-  app.get("/api/completed-tasks", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/completed-tasks", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     const completedTasks = await storage.getCompletedTasks(userId);
     
     // Get the task details for each completed task
@@ -242,9 +268,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stats routes
-  app.get("/api/stats", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/stats", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     const user = await storage.getUser(userId);
     
     if (!user) {
@@ -264,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       totalPoints: user.points,
       completionRate: Math.round(completionRate),
       currentStreak: user.streak,
-      longestStreak: 12, // Mocked for demo
+      longestStreak: 12, // Mocked for now
       totalTasksCompleted: completedTasks.length
     };
     
@@ -272,9 +297,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Weekly stats
-  app.get("/api/stats/weekly", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/stats/weekly", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     
     // Get dates for the last 7 days
     const today = new Date();
@@ -316,9 +340,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Top completed tasks
-  app.get("/api/stats/top-tasks", async (req: Request, res: Response) => {
-    // For demo, use the demo user (id=1)
-    const userId = 1;
+  app.get("/api/stats/top-tasks", isAuthenticated, async (req: Request, res: Response) => {
+    const userId = req.user!.id;
     
     const completedTasks = await storage.getCompletedTasks(userId);
     
