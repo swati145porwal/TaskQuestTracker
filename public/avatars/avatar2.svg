@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Face -->
+  <circle cx="100" cy="100" r="70" fill="#F6E05E" />
+  
+  <!-- Eyes -->
+  <ellipse cx="70" cy="85" rx="10" ry="12" fill="#1A202C" />
+  <ellipse cx="130" cy="85" rx="10" ry="12" fill="#1A202C" />
+  
+  <!-- Glasses -->
+  <rect x="55" y="75" width="30" height="20" rx="10" stroke="#2D3748" stroke-width="3" fill="none" />
+  <rect x="115" y="75" width="30" height="20" rx="10" stroke="#2D3748" stroke-width="3" fill="none" />
+  <line x1="85" y1="85" x2="115" y2="85" stroke="#2D3748" stroke-width="3" />
+  
+  <!-- Smile -->
+  <path d="M75 120C75 120 90 135 125 120" stroke="#1A202C" stroke-width="4" stroke-linecap="round" />
+  
+  <!-- Hair -->
+  <path d="M40 70C40 70 30 40 60 30C90 20 110 20 140 30C170 40 160 70 160 70L150 60C150 60 145 40 100 40C55 40 50 60 50 60L40 70Z" fill="#F56565" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#F6AD55" />
+      <stop offset="1" stop-color="#C05621" />
+    </radialGradient>
+  </defs>
+</svg>

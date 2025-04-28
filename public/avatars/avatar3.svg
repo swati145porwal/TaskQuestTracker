@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Robot Head -->
+  <rect x="50" y="50" width="100" height="100" rx="20" fill="#A3BFFA" />
+  
+  <!-- Eyes -->
+  <circle cx="75" cy="85" r="15" fill="#1A202C" />
+  <circle cx="125" cy="85" r="15" fill="#1A202C" />
+  
+  <!-- Eye Lights -->
+  <circle cx="80" cy="80" r="5" fill="#EDF2F7" />
+  <circle cx="130" cy="80" r="5" fill="#EDF2F7" />
+  
+  <!-- Mouth -->
+  <rect x="70" y="120" width="60" height="10" rx="5" fill="#1A202C" />
+  
+  <!-- Antenna -->
+  <line x1="100" y1="50" x2="100" y2="30" stroke="#1A202C" stroke-width="4" />
+  <circle cx="100" cy="25" r="8" fill="#FC8181" />
+  
+  <!-- Bolts -->
+  <circle cx="50" cy="75" r="5" fill="#718096" />
+  <circle cx="50" cy="125" r="5" fill="#718096" />
+  <circle cx="150" cy="75" r="5" fill="#718096" />
+  <circle cx="150" cy="125" r="5" fill="#718096" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#4299E1" />
+      <stop offset="1" stop-color="#2B6CB0" />
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Crown Shape -->
+  <path d="M50 100L75 60L100 80L125 60L150 100V150H50V100Z" fill="#F6E05E" />
+  
+  <!-- Crown Points -->
+  <path d="M50 100L75 60L100 80L125 60L150 100" stroke="#D69E2E" stroke-width="5" />
+  
+  <!-- Crown Base -->
+  <rect x="45" y="135" width="110" height="15" fill="#D69E2E" />
+  
+  <!-- Jewels -->
+  <circle cx="75" cy="70" r="8" fill="#ED64A6" />
+  <circle cx="100" cy="90" r="8" fill="#4299E1" />
+  <circle cx="125" cy="70" r="8" fill="#48BB78" />
+  
+  <!-- Face -->
+  <circle cx="100" cy="120" r="12" fill="#1A202C" />
+  <path d="M85 120C85 120 90 130 115 130 115 130 110 120 85 120" fill="#1A202C" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#ECC94B" />
+      <stop offset="1" stop-color="#B7791F" />
+    </radialGradient>
+  </defs>
+</svg>

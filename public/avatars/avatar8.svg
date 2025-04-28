@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Wizard Hat -->
+  <path d="M60 120C60 120 70 50 100 30C130 50 140 120 140 120H60Z" fill="#6B46C1" />
+  <path d="M50 120C50 120 100 110 150 120" stroke="#553C9A" stroke-width="5" />
+  
+  <!-- Stars on Hat -->
+  <path d="M90 70L93 77L100 77L94 82L97 90L90 85L83 90L86 82L80 77L87 77L90 70Z" fill="#F6E05E" />
+  <path d="M110 50L113 57L120 57L114 62L117 70L110 65L103 70L106 62L100 57L107 57L110 50Z" fill="#F6E05E" />
+  <path d="M75 90L77 95L83 95L78 98L80 105L75 101L70 105L72 98L67 95L73 95L75 90Z" fill="#F6E05E" />
+  
+  <!-- Face -->
+  <circle cx="100" cy="140" r="15" fill="#1A202C" />
+  <ellipse cx="85" cy="138" rx="3" ry="5" fill="#F6E05E" />
+  <ellipse cx="115" cy="138" rx="3" ry="5" fill="#F6E05E" />
+  <path d="M90 150C90 150 100 160 110 150" stroke="#F6E05E" stroke-width="2" />
+  
+  <!-- Beard -->
+  <path d="M85 150C85 150 100 180 115 150" fill="#A0AEC0" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#9F7AEA" />
+      <stop offset="1" stop-color="#4C1D95" />
+    </radialGradient>
+  </defs>
+</svg>

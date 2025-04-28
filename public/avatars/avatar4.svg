@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Cat Face -->
+  <circle cx="100" cy="100" r="70" fill="#F7FAFC" />
+  
+  <!-- Ears -->
+  <path d="M50 50L70 80L90 50Z" fill="#E2E8F0" />
+  <path d="M150 50L130 80L110 50Z" fill="#E2E8F0" />
+  <path d="M50 50L70 80L90 50Z" fill="#E2E8F0" />
+  <path d="M150 50L130 80L110 50Z" fill="#E2E8F0" />
+  
+  <!-- Inner Ears -->
+  <path d="M55 55L70 75L85 55Z" fill="#FC8181" />
+  <path d="M145 55L130 75L115 55Z" fill="#FC8181" />
+  
+  <!-- Eyes -->
+  <ellipse cx="75" cy="85" rx="10" ry="15" fill="#2D3748" />
+  <ellipse cx="125" cy="85" rx="10" ry="15" fill="#2D3748" />
+  
+  <!-- Pupils -->
+  <ellipse cx="75" cy="85" rx="3" ry="8" fill="#FC8181" />
+  <ellipse cx="125" cy="85" rx="3" ry="8" fill="#FC8181" />
+  
+  <!-- Nose -->
+  <path d="M95 100L100 110L105 100Z" fill="#FC8181" />
+  
+  <!-- Whiskers -->
+  <line x1="50" y1="100" x2="80" y2="105" stroke="#A0AEC0" stroke-width="2" />
+  <line x1="50" y1="110" x2="80" y2="110" stroke="#A0AEC0" stroke-width="2" />
+  <line x1="50" y1="120" x2="80" y2="115" stroke="#A0AEC0" stroke-width="2" />
+  
+  <line x1="150" y1="100" x2="120" y2="105" stroke="#A0AEC0" stroke-width="2" />
+  <line x1="150" y1="110" x2="120" y2="110" stroke="#A0AEC0" stroke-width="2" />
+  <line x1="150" y1="120" x2="120" y2="115" stroke="#A0AEC0" stroke-width="2" />
+  
+  <!-- Mouth -->
+  <path d="M90 120C90 120 100 130 110 120" stroke="#A0AEC0" stroke-width="2" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#F687B3" />
+      <stop offset="1" stop-color="#B83280" />
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <circle cx="100" cy="100" r="100" fill="url(#paint0_radial)" />
+  
+  <!-- Ninja Mask -->
+  <rect x="40" y="50" width="120" height="100" rx="50" fill="#2D3748" />
+  
+  <!-- Eyes -->
+  <ellipse cx="70" cy="85" rx="15" ry="8" fill="white" />
+  <ellipse cx="130" cy="85" rx="15" ry="8" fill="white" />
+  
+  <!-- Angry Eyebrows -->
+  <line x1="55" y1="72" x2="85" y2="77" stroke="white" stroke-width="3" stroke-linecap="round" />
+  <line x1="115" y1="77" x2="145" y2="72" stroke="white" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Headband -->
+  <rect x="40" y="60" width="120" height="20" fill="#F56565" />
+  <rect x="40" y="60" width="120" height="5" fill="#C53030" />
+  
+  <!-- Headband Knot -->
+  <path d="M160 70L175 60V80L160 70Z" fill="#F56565" />
+  <path d="M170 60L185 65L170 80L170 60Z" fill="#F56565" />
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) rotate(90) scale(100)">
+      <stop stop-color="#FC8181" />
+      <stop offset="1" stop-color="#9B2C2C" />
+    </radialGradient>
+  </defs>
+</svg>
