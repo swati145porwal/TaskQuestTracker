@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, Repeat } from "lucide-react";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, Repeat, Bell } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -347,7 +347,7 @@ export default function AddTaskModal() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <Bell className="h-4 w-4 text-gray-400" />
                       <span className="text-sm text-gray-600">Set reminder</span>
                     </div>
                     <button
@@ -373,28 +373,46 @@ export default function AddTaskModal() {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <Label htmlFor="reminderDate" className="text-xs text-gray-500 mb-1">Date</Label>
-                              <Input
-                                id="reminderDate"
-                                type="date"
-                                className="h-8 text-xs"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="reminderTime" className="text-xs text-gray-500 mb-1">Time</Label>
-                              <Input
-                                id="reminderTime"
-                                type="time"
-                                className="h-8 text-xs"
-                              />
+                        <div className="bg-gray-50 p-3 rounded-md space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="reminder-enabled" className="flex items-center gap-2 text-xs text-gray-600">
+                              <Bell className="h-3.5 w-3.5" />
+                              Enable reminders
+                            </Label>
+                            <div className="relative inline-flex h-4 w-7 flex-shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-in-out border-primary bg-primary">
+                              <span className="pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-3.5" />
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-primary">
-                            <Sparkles className="h-3 w-3" />
-                            <span>We'll notify you when it's time!</span>
+                          
+                          <div className="grid gap-2">
+                            <Label htmlFor="remind-before" className="flex items-center gap-2 text-xs text-gray-600">
+                              <Clock className="h-3.5 w-3.5" />
+                              Remind me before task is due
+                            </Label>
+                            <select
+                              id="remind-before"
+                              className="h-8 text-xs rounded-md border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary w-full px-3"
+                            >
+                              <option value="5">5 minutes</option>
+                              <option value="10">10 minutes</option>
+                              <option value="15">15 minutes</option>
+                              <option value="30" selected>30 minutes</option>
+                              <option value="60">1 hour</option>
+                              <option value="120">2 hours</option>
+                              <option value="1440">1 day</option>
+                            </select>
+                          </div>
+                          
+                          <div className="grid gap-2">
+                            <Label htmlFor="notification-type" className="text-xs text-gray-600">Notification type</Label>
+                            <select
+                              id="notification-type"
+                              className="h-8 text-xs rounded-md border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary w-full px-3"
+                            >
+                              <option value="app">In-app only</option>
+                              <option value="browser" selected>Browser notification</option>
+                              <option value="both">Both</option>
+                            </select>
                           </div>
                         </div>
                       </motion.div>
