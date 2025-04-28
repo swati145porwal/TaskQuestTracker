@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { Task } from "@shared/schema";
 import { useTaskContext } from "@/context/TaskContext";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
+import { Clock, Trash2 } from "lucide-react";
 
 interface TaskCardProps {
   task: Task;
@@ -26,25 +26,25 @@ export default function TaskCard({ task }: TaskCardProps) {
   };
   
   return (
-    <div className={`task-card rounded-xl p-4 relative animate-slideUp mb-3 ${task.isCompleted ? "bg-gray-50" : "bg-white"}`}>
+    <div className={`task-card rounded-xl p-4 relative animate-slideUp mb-4 shadow-sm ${task.isCompleted ? "completed" : ""}`}>
       <div className="flex items-start">
         <div className="flex-shrink-0 mt-0.5">
           {task.isCompleted ? (
-            <div className="w-6 h-6 rounded-md bg-primary-500 border-2 border-primary-500 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-tr from-success to-success/70 shadow-md flex items-center justify-center">
               <i className="ri-check-line text-white"></i>
             </div>
           ) : (
             <button 
               ref={checkboxRef}
-              className="custom-checkbox w-6 h-6 rounded-md border-2 border-primary-300 flex items-center justify-center hover:bg-primary-50 transition-colors"
+              className="custom-checkbox w-7 h-7 rounded-md border-2 border-primary/50 flex items-center justify-center hover:bg-primary/5 transition-all hover:scale-105 hover:shadow-md"
               onClick={handleCompleteTask}
             >
-              <i className="ri-check-line text-primary-500 opacity-0"></i>
+              <i className="ri-check-line text-primary opacity-0"></i>
             </button>
           )}
         </div>
         <div className="ml-3 flex-grow">
-          <h3 className={`${task.isCompleted ? "text-gray-500 line-through" : "text-gray-800"} font-medium`}>
+          <h3 className={`${task.isCompleted ? "text-gray-500 line-through" : "text-gray-800"} font-medium font-outfit`}>
             {task.title}
           </h3>
           {task.description && (
@@ -52,22 +52,31 @@ export default function TaskCard({ task }: TaskCardProps) {
               {task.description}
             </p>
           )}
+          
+          {task.time && (
+            <div className="flex items-center mt-2 text-gray-400 text-xs">
+              <Clock className="h-3 w-3 mr-1" />
+              <span>{task.time}</span>
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-end ml-4">
-          <div className={`${task.isCompleted ? "bg-gray-200 text-gray-500" : "bg-primary-100 text-primary-700"} px-2 py-0.5 rounded-full text-xs font-medium flex items-center`}>
-            <i className="ri-coin-line text-xs mr-1"></i>
+          <div className={`${
+            task.isCompleted 
+              ? "bg-gray-200 text-gray-500" 
+              : "bg-gradient-to-r from-primary/20 to-secondary/20 text-gradient shadow-sm"
+            } px-3 py-1 rounded-full text-xs font-bold flex items-center`}
+          >
+            <i className={`ri-coin-line ${task.isCompleted ? "text-gray-500" : "text-primary"} mr-1`}></i>
             <span>{task.points} pts</span>
           </div>
-          {task.time && (
-            <span className="text-gray-400 text-xs mt-1">{task.time}</span>
-          )}
         </div>
       </div>
       
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <button 
-            className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors p-1"
+            className="absolute top-2 right-2 text-gray-400 hover:text-destructive transition-colors p-1 rounded-full hover:bg-destructive/10"
             aria-label="Delete task"
           >
             <Trash2 className="h-4 w-4" />
@@ -82,7 +91,9 @@ export default function TaskCard({ task }: TaskCardProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteTask(task.id)}>Delete</AlertDialogAction>
+            <AlertDialogAction onClick={() => deleteTask(task.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
