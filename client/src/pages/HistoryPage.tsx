@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { formatRelativeTime } from "@/lib/utils";
+import TaskProofManager from "@/components/TaskProofManager";
+import { CheckCircle, Coins } from "lucide-react";
 
 interface CompletedTaskWithDetails {
   id: number;

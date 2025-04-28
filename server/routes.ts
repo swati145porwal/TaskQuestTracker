@@ -372,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }, (req, res, next) => {
     // Use Express's static file middleware for the uploads directory
     const options = {
-      dotfiles: 'deny',
+      dotfiles: 'deny' as 'deny',
       maxAge: '1d',
       index: false,
     };
