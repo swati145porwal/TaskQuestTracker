@@ -17,18 +17,21 @@ import PointsAnimation from "@/components/PointsAnimation";
 import { TaskProvider } from "./context/TaskContext";
 import { AuthProvider } from "./hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TaskProvider>
-          <TooltipProvider>
-            <AppContent />
-          </TooltipProvider>
-        </TaskProvider>
-      </AuthProvider>
-      <Toaster />
+      <ThemeProvider>
+        <AuthProvider>
+          <TaskProvider>
+            <TooltipProvider>
+              <AppContent />
+            </TooltipProvider>
+          </TaskProvider>
+        </AuthProvider>
+        <Toaster />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

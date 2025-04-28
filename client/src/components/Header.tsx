@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTaskContext } from "@/context/TaskContext";
 import { useAuth } from "@/hooks/use-auth";
 import PointsDisplay from "./PointsDisplay";
+import { ThemeToggle } from "./ThemeToggle";
 import { Link, useLocation } from "wouter";
 import { 
   Popover, 
@@ -117,6 +118,9 @@ export default function Header({ title }: HeaderProps) {
         {user && <PointsDisplay points={user.points} />}
         
         <div className="flex items-center space-x-3">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
           {/* Notifications */}
           <Popover>
             <PopoverTrigger asChild>
