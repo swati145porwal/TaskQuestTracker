@@ -89,6 +89,12 @@
       radial-gradient(circle at bottom left, rgba(30, 144, 255, 0.05), transparent 40%);
     min-height: 100vh;
   }
+  
+  .dark body {
+    background-image: 
+      radial-gradient(circle at top right, rgba(138, 43, 226, 0.08), transparent 40%),
+      radial-gradient(circle at bottom left, rgba(30, 144, 255, 0.08), transparent 40%);
+  }
 }
 
 @layer components {
@@ -100,10 +106,23 @@
       rgba(252, 250, 255, 1) 100%);
   }
   
+  .dark .task-card {
+    background: linear-gradient(135deg, 
+      rgba(30, 30, 36, 1) 0%, 
+      rgba(26, 26, 32, 1) 100%);
+  }
+  
   .task-card.completed {
     background: linear-gradient(135deg, 
       rgba(249, 250, 251, 1) 0%, 
       rgba(243, 244, 246, 1) 100%);
+  }
+  
+  .dark .task-card.completed {
+    background: linear-gradient(135deg, 
+      rgba(38, 38, 45, 1) 0%, 
+      rgba(33, 33, 39, 1) 100%);
+    @apply opacity-70;
   }
   
   .reward-card {
@@ -157,6 +176,10 @@
 /* Glass morphism effect */
 .glass-effect {
   @apply bg-white/70 backdrop-blur-lg border border-white/20;
+}
+
+.dark .glass-effect {
+  @apply bg-gray-900/70 backdrop-blur-lg border border-gray-800/50;
 }
 
 /* Shimmer animation */
