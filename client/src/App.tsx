@@ -15,6 +15,7 @@ import CalendarPage from "@/pages/CalendarPage";
 import CalendarImportPage from "@/pages/CalendarImportPage";
 import AuthPage from "@/pages/auth-page";
 import PointsAnimation from "@/components/PointsAnimation";
+import NotificationSystem from "@/components/NotificationSystem";
 import { TaskProvider } from "./context/TaskContext";
 import { AuthProvider } from "./hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
@@ -49,6 +50,7 @@ function AppContent() {
       </main>
       {!isAuthPage && <BottomNavigation />}
       <PointsAnimation />
+      {!isAuthPage && <NotificationSystem />}
     </div>
   );
 }
