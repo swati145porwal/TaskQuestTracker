@@ -151,7 +151,10 @@ export default function AvatarSelector({
                   >
                     <div className="relative">
                       <Avatar className="h-16 w-16 mb-2">
-                        <AvatarImage src={avatar.imageUrl} alt={avatar.name} />
+                        <AvatarImage 
+                          src={`/api/avatars/${avatar.id}/image`} 
+                          alt={avatar.name} 
+                        />
                         <AvatarFallback>{avatar.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       
