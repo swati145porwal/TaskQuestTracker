@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, AreaChart, Area } from "recharts";
 import { useTaskContext } from "@/context/TaskContext";
+import { Award, Calendar, ChevronUp, Flame, Sparkle, Star, TrendingUp } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface WeeklyStat {
   day: string;
@@ -27,6 +29,7 @@ export default function StatsPage() {
   });
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStat[]>([]);
   const [topTasks, setTopTasks] = useState<TopTask[]>([]);
+  const [activeChart, setActiveChart] = useState<'daily' | 'weekly'>('weekly');
   
   useEffect(() => {
     // Fetch stats data
@@ -57,16 +60,25 @@ export default function StatsPage() {
     
     fetchStats();
   }, []);
-  
-  // Icon mappings for top tasks
-  const taskIcons = [
-    { icon: "ri-heart-pulse-line", color: "bg-primary-100 text-primary-600" },
-    { icon: "ri-mental-health-line", color: "bg-accent-100 text-accent-600" },
-    { icon: "ri-book-read-line", color: "bg-warning-100 text-warning-600" }
+
+  // Generate some mock data for demonstration
+  const productivityByTimeOfDay = [
+    { name: 'Morning', value: 40 },
+    { name: 'Afternoon', value: 30 },
+    { name: 'Evening', value: 20 },
+    { name: 'Night', value: 10 }
   ];
   
+  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--warning))'];
+  
+  // Prepare data for streak visualization
+  const streakData = Array.from({ length: 7 }).map((_, i) => ({
+    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+    completed: Math.random() > 0.3 // Just for visualization
+  }));
+  
   return (
-    <div className="animate-fadeIn">
+    <div className="animate-fadeIn pb-10">
       {/* Tabs Navigation */}
       <div className="flex border-b border-gray-200 mb-6 overflow-x-auto hide-scrollbar">
         <Link href="/">
@@ -80,7 +92,7 @@ export default function StatsPage() {
           </a>
         </Link>
         <Link href="/stats">
-          <a className="text-primary-500 border-b-2 border-primary-500 px-4 py-2 font-medium text-sm font-outfit">
+          <a className="text-primary border-b-2 border-primary px-4 py-2 font-medium text-sm font-outfit">
             Stats
           </a>
         </Link>
@@ -91,78 +103,285 @@ export default function StatsPage() {
         </Link>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-500 font-medium text-sm">Total Points</h3>
-            <i className="ri-coin-line text-primary-400"></i>
+      {/* User Stats Overview */}
+      <div className="mb-6">
+        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6 pb-6 border-b border-gray-100">
+            <div className="flex-shrink-0">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5 shadow-lg">
+                <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-gradient">{user?.username?.charAt(0) || 'D'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex-grow">
+              <h2 className="text-2xl font-bold font-outfit mb-1">{user?.username || 'Demo User'}</h2>
+              <div className="flex flex-wrap gap-4 mt-2">
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1.5 rounded-full bg-primary/10">
+                    <Star className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Total Points</div>
+                    <div className="font-bold text-gradient">{stats.totalPoints}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1.5 rounded-full bg-success/10">
+                    <TrendingUp className="h-4 w-4 text-success" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Completion Rate</div>
+                    <div className="font-bold">{stats.completionRate}%</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1.5 rounded-full bg-accent/10">
+                    <Flame className="h-4 w-4 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Current Streak</div>
+                    <div className="font-bold">{stats.currentStreak} days</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1.5">
+                  <div className="p-1.5 rounded-full bg-warning/10">
+                    <Award className="h-4 w-4 text-warning" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Total Completed</div>
+                    <div className="font-bold">{stats.totalTasksCompleted} tasks</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-3xl font-bold text-gray-800 font-outfit">{stats.totalPoints}</p>
-          <p className="text-green-500 text-sm flex items-center mt-2">
-            <i className="ri-arrow-up-line mr-1"></i>
-            <span>25% increase this week</span>
-          </p>
-        </div>
-        
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-500 font-medium text-sm">Completion Rate</h3>
-            <i className="ri-percent-line text-accent-500"></i>
-          </div>
-          <p className="text-3xl font-bold text-gray-800 font-outfit">{stats.completionRate}%</p>
-          <p className="text-green-500 text-sm flex items-center mt-2">
-            <i className="ri-arrow-up-line mr-1"></i>
-            <span>5% increase this week</span>
-          </p>
-        </div>
-        
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-500 font-medium text-sm">Current Streak</h3>
-            <i className="ri-fire-line text-warning-500"></i>
-          </div>
-          <p className="text-3xl font-bold text-gray-800 font-outfit">{stats.currentStreak} days</p>
-          <p className="text-gray-500 text-sm flex items-center mt-2">
-            <span>Longest: {stats.longestStreak} days</span>
-          </p>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
-        <h3 className="text-gray-800 font-semibold mb-4">Weekly Task Completion</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={weeklyStats}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip 
-                formatter={(value) => [`${value} tasks`, 'Completed']}
-                labelFormatter={(label) => `${label}`}
+          
+          {/* Streak calendar */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Your Streak Calendar</h3>
+            <div className="flex gap-1.5 mb-2">
+              {streakData.map((day, i) => (
+                <div key={i} className="flex-1 text-center">
+                  <div className={`
+                    w-10 h-10 rounded-full mx-auto mb-1 flex items-center justify-center
+                    ${day.completed 
+                      ? 'bg-gradient-to-br from-primary to-primary/70 text-white shadow-sm' 
+                      : 'bg-gray-100 text-gray-400'
+                    }
+                  `}>
+                    {i === stats.currentStreak % 7 && day.completed ? (
+                      <Sparkle className="h-5 w-5" />
+                    ) : (
+                      <span className="text-xs font-medium">{day.day}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4">
+              <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+                <span>Current streak: {stats.currentStreak} days</span>
+                <span>Longest streak: {stats.longestStreak} days</span>
+              </div>
+              <Progress 
+                value={(stats.currentStreak / (stats.longestStreak || 1)) * 100} 
+                className="h-2 bg-gray-100" 
               />
-              <Bar dataKey="count" fill="#6366F1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h3 className="text-gray-800 font-semibold mb-4">Top Completed Tasks</h3>
-        <div className="space-y-3">
+      {/* Stats Cards and Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Weekly Task Chart */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-gray-800 font-bold text-lg font-outfit">Task Completion</h3>
+            <div className="flex border border-gray-200 rounded-lg overflow-hidden text-xs">
+              <button 
+                className={`px-3 py-1 ${activeChart === 'daily' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
+                onClick={() => setActiveChart('daily')}
+              >
+                Daily
+              </button>
+              <button 
+                className={`px-3 py-1 ${activeChart === 'weekly' ? 'bg-primary text-white' : 'bg-white text-gray-600'}`}
+                onClick={() => setActiveChart('weekly')}
+              >
+                Weekly
+              </button>
+            </div>
+          </div>
+          
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              {activeChart === 'weekly' ? (
+                <BarChart data={weeklyStats} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                      <stop offset="100%" stopColor="hsl(var(--secondary))" stopOpacity={0.8} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value} tasks`, 'Completed']}
+                    labelFormatter={(label) => `${label}`}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid #F3F4F6' }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="url(#barGradient)" 
+                    radius={[4, 4, 0, 0]}
+                    barSize={36}
+                  />
+                </BarChart>
+              ) : (
+                <AreaChart data={[
+                  { hour: '6AM', tasks: 1 },
+                  { hour: '9AM', tasks: 2 },
+                  { hour: '12PM', tasks: 1 },
+                  { hour: '3PM', tasks: 3 },
+                  { hour: '6PM', tasks: 2 },
+                  { hour: '9PM', tasks: 1 },
+                ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis 
+                    dataKey="hour" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value} tasks`, 'Completed']}
+                    labelFormatter={(label) => `${label}`}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid #F3F4F6' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="tasks" 
+                    stroke="hsl(var(--primary))" 
+                    fillOpacity={1}
+                    fill="url(#areaGradient)" 
+                  />
+                </AreaChart>
+              )}
+            </ResponsiveContainer>
+          </div>
+        </div>
+        
+        {/* Productivity by Time */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <h3 className="text-gray-800 font-bold text-lg font-outfit mb-4">Task Productivity</h3>
+          <div className="h-72 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={productivityByTimeOfDay}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={90}
+                  paddingAngle={4}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                  labelLine={false}
+                >
+                  {productivityByTimeOfDay.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36} 
+                  iconSize={10}
+                  iconType="circle"
+                  formatter={(value) => <span className="text-sm text-gray-600">{value}</span>}
+                />
+                <Tooltip 
+                  formatter={(value) => [`${value}%`, 'Productivity']}
+                  contentStyle={{ borderRadius: '8px', border: '1px solid #F3F4F6' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      
+      {/* Top Tasks */}
+      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mt-6">
+        <h3 className="text-gray-800 font-bold text-lg font-outfit mb-4">Top Completed Tasks</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {topTasks.length > 0 ? (
             topTasks.map((item, index) => (
-              <div key={item.task?.id || index} className="flex items-center justify-between">
+              <div 
+                key={item.task?.id || index} 
+                className="flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent p-3 rounded-lg"
+              >
                 <div className="flex items-center">
-                  <div className={`w-8 h-8 flex items-center justify-center ${taskIcons[index]?.color || "bg-gray-100 text-gray-600"} rounded-md`}>
-                    <i className={taskIcons[index]?.icon || "ri-checkbox-circle-line"}></i>
+                  <div className={`w-10 h-10 flex items-center justify-center rounded-lg
+                    bg-gradient-to-br ${
+                      index === 0 ? 'from-primary to-secondary' : 
+                      index === 1 ? 'from-blue-400 to-blue-500' : 
+                      index === 2 ? 'from-indigo-400 to-indigo-500' : 
+                      'from-gray-400 to-gray-500'
+                    } text-white shadow-sm`}
+                  >
+                    {index === 0 && <Award className="h-5 w-5" />}
+                    {index === 1 && <Award className="h-5 w-5" />}
+                    {index === 2 && <Award className="h-5 w-5" />}
+                    {index > 2 && <span className="text-sm font-bold">{index + 1}</span>}
                   </div>
-                  <span className="ml-3 text-gray-700">{item.task?.title || "Unknown task"}</span>
+                  <div className="ml-3">
+                    <div className="text-gray-800 font-medium">{item.task?.title || "Unknown task"}</div>
+                    <div className="text-xs text-gray-500 flex items-center mt-0.5">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      <span>Completed {item.count} times</span>
+                    </div>
+                  </div>
                 </div>
-                <span className="text-gray-500 text-sm">{item.count} times</span>
+                
+                <div className="flex-shrink-0 flex items-center justify-center bg-primary/10 rounded-md py-1 px-2 text-primary text-sm">
+                  +{Math.floor(item.count * (25 + Math.random() * 25))} pts
+                </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-4">
-              <p className="text-gray-500">Complete more tasks to see statistics</p>
+            <div className="text-center py-8 md:col-span-2">
+              <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                <Calendar className="h-8 w-8 text-gray-400" />
+              </div>
+              <h4 className="text-gray-700 font-medium mb-1">No completed tasks yet</h4>
+              <p className="text-gray-500 text-sm">Complete tasks to see your statistics here</p>
             </div>
           )}
         </div>

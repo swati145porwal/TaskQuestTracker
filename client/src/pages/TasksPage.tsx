@@ -42,30 +42,84 @@ export default function TasksPage() {
         </Link>
       </div>
       
-      {/* Progress Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-xl font-bold text-gradient font-outfit">Today's Progress</h2>
-          <div className="flex items-center">
-            <div className="flex items-center mr-4">
-              <div className="bg-gradient-to-r from-accent to-accent/80 text-xs text-white px-3 py-1 rounded-full font-medium flex items-center shadow-sm">
-                <Flame className="h-3.5 w-3.5 mr-1 stroke-[2.5]" />
-                <span className="font-bold">{user?.streak || 0}</span> 
-                <span className="ml-0.5">day streak</span>
+      {/* User Profile Section */}
+      <div className="mb-6">
+        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5">
+                <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gradient">{user?.username?.charAt(0) || 'D'}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute bottom-0 right-0 bg-gradient-to-r from-accent to-accent/80 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-sm">
+                {user?.streak || 0}
               </div>
             </div>
-            <span className="text-sm text-primary font-bold bg-primary/5 px-2 py-1 rounded-md">
-              {completedTasksCount}/{totalTasksCount} completed
-            </span>
+            
+            <div className="flex-1">
+              <div className="flex justify-between">
+                <div>
+                  <h2 className="text-lg font-bold font-outfit">{user?.username || 'Demo User'}</h2>
+                  <div className="flex items-center text-xs text-gray-500 mt-0.5">
+                    <Flame className="h-3 w-3 mr-1 text-accent" />
+                    <span>{user?.streak || 0} day streak</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <div className="text-xs text-gray-500">Total Points</div>
+                  <div className="text-xl font-bold text-gradient">{user?.points || 0}</div>
+                </div>
+              </div>
+              
+              <div className="mt-2">
+                <div className="flex justify-between items-center mb-1 text-xs">
+                  <div className="text-gray-500">Today's Progress</div>
+                  <div className="font-medium">
+                    <span className="text-primary">{completedTasksCount}</span>
+                    <span className="text-gray-400">/{totalTasksCount}</span>
+                  </div>
+                </div>
+                <ProgressBar progress={progressPercentage} max={100} />
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <ProgressBar progress={progressPercentage} max={100} />
           
-          <div className="flex justify-between items-center mt-3 text-xs text-gray-500">
-            <span>{completedTasksCount} done</span>
-            <span>{totalTasksCount - completedTasksCount} remaining</span>
+          {/* Timeline for today */}
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-700">Today's Timeline</h3>
+              <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+            </div>
+            
+            <div className="relative pl-6">
+              {/* Timeline track */}
+              <div className="absolute top-0 bottom-0 left-2 w-0.5 bg-gray-200"></div>
+              
+              {incompleteTasks.length > 0 ? (
+                incompleteTasks.slice(0, 3).map((task, index) => (
+                  <div key={task.id} className="mb-3 relative">
+                    {/* Timeline dot */}
+                    <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-white border-2 border-primary/50 z-10"></div>
+                    
+                    <div className="text-xs text-gray-400 mb-0.5">
+                      {task.time || (index === 0 ? '9:00 AM' : index === 1 ? '1:30 PM' : '4:00 PM')}
+                    </div>
+                    <div className="text-sm font-medium text-gray-700">{task.title}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500 py-2">No remaining tasks for today</div>
+              )}
+              
+              {incompleteTasks.length > 3 && (
+                <div className="text-xs text-primary font-medium mt-1 text-center">
+                  +{incompleteTasks.length - 3} more tasks
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

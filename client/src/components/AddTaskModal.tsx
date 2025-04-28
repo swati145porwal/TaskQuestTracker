@@ -5,6 +5,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const TASK_TEMPLATES = [
+  { 
+    title: "Morning workout routine", 
+    description: "Daily exercise to stay healthy", 
+    points: 50, 
+    time: "7:00 AM",
+    category: "Health"
+  },
+  { 
+    title: "Read for 30 minutes", 
+    description: "Reading session to expand knowledge", 
+    points: 30, 
+    time: "8:30 PM",
+    category: "Self-improvement"
+  },
+  { 
+    title: "Meditate for 10 minutes", 
+    description: "Daily mindfulness practice", 
+    points: 20, 
+    time: "6:30 AM",
+    category: "Wellness"
+  },
+  { 
+    title: "Drink 8 glasses of water", 
+    description: "Stay hydrated throughout the day", 
+    points: 25, 
+    time: "All day",
+    category: "Health"
+  }
+];
+
+const TASK_CATEGORIES = [
+  { name: "Health", color: "from-green-400 to-emerald-500", icon: <Star className="h-3 w-3" /> },
+  { name: "Work", color: "from-blue-400 to-indigo-500", icon: <ListChecks className="h-3 w-3" /> },
+  { name: "Personal", color: "from-purple-400 to-violet-500", icon: <PenLine className="h-3 w-3" /> },
+  { name: "Wellness", color: "from-yellow-400 to-amber-500", icon: <Star className="h-3 w-3" /> },
+  { name: "Self-improvement", color: "from-pink-400 to-rose-500", icon: <Star className="h-3 w-3" /> }
+];
 
 export default function AddTaskModal() {
   const { isAddTaskModalOpen, closeAddTaskModal, addTask } = useTaskContext();
@@ -14,6 +56,9 @@ export default function AddTaskModal() {
   const [taskDescription, setTaskDescription] = useState("");
   const [taskPoints, setTaskPoints] = useState("");
   const [taskTime, setTaskTime] = useState("");
+  const [taskCategory, setTaskCategory] = useState("Health");
+  const [activeTab, setActiveTab] = useState("create");
+  const [remindOnDate, setRemindOnDate] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,98 +84,262 @@ export default function AddTaskModal() {
     try {
       await addTask({
         title: taskName,
-        description: taskDescription,
+        description: taskDescription ? `${taskDescription}${taskCategory ? ` [${taskCategory}]` : ''}` : (taskCategory ? `[${taskCategory}]` : ''),
         points: parseInt(taskPoints),
         time: taskTime
       });
       
+      toast({
+        title: "Task added successfully",
+        description: "Your new task has been created.",
+        variant: "default",
+      });
+      
       // Reset form
-      setTaskName("");
-      setTaskDescription("");
-      setTaskPoints("");
-      setTaskTime("");
+      resetForm();
+      closeAddTaskModal();
     } catch (error) {
       console.error("Error adding task:", error);
+      toast({
+        title: "Failed to add task",
+        description: "An error occurred while creating your task.",
+        variant: "destructive",
+      });
     }
   };
   
-  const handleClose = () => {
-    // Reset form
+  const resetForm = () => {
     setTaskName("");
     setTaskDescription("");
     setTaskPoints("");
     setTaskTime("");
+    setTaskCategory("Health");
+    setRemindOnDate(false);
+    setActiveTab("create");
+  };
+  
+  const handleClose = () => {
+    resetForm();
     closeAddTaskModal();
+  };
+  
+  const selectTemplate = (template: typeof TASK_TEMPLATES[0]) => {
+    setTaskName(template.title);
+    setTaskDescription(template.description);
+    setTaskPoints(template.points.toString());
+    setTaskTime(template.time);
+    setTaskCategory(template.category);
+    setActiveTab("create");
+  };
+  
+  const getPointsValue = () => {
+    const value = parseInt(taskPoints);
+    if (isNaN(value) || value <= 0) return 1;
+    if (value > 100) return 100;
+    return value;
   };
   
   return (
     <Dialog open={isAddTaskModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-800 font-outfit">Add New Task</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-gradient font-outfit">Add New Task</DialogTitle>
           <DialogDescription>
-            Create a new task with points to earn when completed.
+            Create tasks to build habits and earn points when completed.
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-          <div className="space-y-2">
-            <Label htmlFor="taskName">Task Name</Label>
-            <Input 
-              id="taskName" 
-              placeholder="e.g., Morning workout" 
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-              required
-            />
-          </div>
+        <Tabs defaultValue="create" value={activeTab} onValueChange={setActiveTab} className="mt-2">
+          <TabsList className="grid grid-cols-2 mb-4">
+            <TabsTrigger value="create" className="text-sm">Create Task</TabsTrigger>
+            <TabsTrigger value="templates" className="text-sm">Templates</TabsTrigger>
+          </TabsList>
           
-          <div className="space-y-2">
-            <Label htmlFor="taskDesc">Description (optional)</Label>
-            <Input 
-              id="taskDesc" 
-              placeholder="e.g., 30-minute cardio exercise" 
-              value={taskDescription}
-              onChange={(e) => setTaskDescription(e.target.value)}
-            />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="taskPoints">Points</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="ri-coin-line text-gray-400"></i>
+          <TabsContent value="create">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="taskName" className="text-sm font-medium">Task Name</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <ListChecks className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <Input 
+                    id="taskName" 
+                    placeholder="e.g., Morning workout" 
+                    className="pl-9"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    required
+                  />
                 </div>
-                <Input
-                  id="taskPoints"
-                  type="number"
-                  min="1"
-                  placeholder="50"
-                  className="pl-9"
-                  value={taskPoints}
-                  onChange={(e) => setTaskPoints(e.target.value)}
-                  required
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="taskDesc" className="text-sm font-medium">Description (optional)</Label>
+                <Textarea 
+                  id="taskDesc" 
+                  placeholder="e.g., 30-minute cardio exercise" 
+                  className="resize-none"
+                  rows={2}
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
                 />
               </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="taskPoints" className="text-sm font-medium">Points</Label>
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Input
+                        id="taskPoints"
+                        type="number"
+                        min="1"
+                        max="100"
+                        placeholder="50"
+                        className="pr-10"
+                        value={taskPoints}
+                        onChange={(e) => setTaskPoints(e.target.value)}
+                        required
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <div className="text-xs px-1.5 py-0.5 bg-primary/10 rounded-md text-primary font-medium">
+                          pts
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary/60 to-secondary/60 rounded-full"
+                        style={{ width: `${getPointsValue()}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>Low</span>
+                      <span>High</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="taskTime" className="text-sm font-medium">Time (optional)</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <Input
+                      id="taskTime"
+                      placeholder="e.g., 8:00 AM"
+                      className="pl-9"
+                      value={taskTime}
+                      onChange={(e) => setTaskTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Category</Label>
+                <div className="flex flex-wrap gap-2">
+                  {TASK_CATEGORIES.map((category) => (
+                    <button
+                      key={category.name}
+                      type="button"
+                      onClick={() => setTaskCategory(category.name)}
+                      className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-all ${
+                        taskCategory === category.name 
+                          ? `bg-gradient-to-r ${category.color} text-white shadow-sm` 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {category.icon}
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    <span className="text-sm text-gray-600">Set reminder</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setRemindOnDate(!remindOnDate)}
+                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out ${
+                      remindOnDate ? 'bg-primary border-primary' : 'bg-gray-200 border-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                        remindOnDate ? 'translate-x-4' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+                
+                {remindOnDate && (
+                  <div className="mt-2 bg-gray-50 p-2 rounded-md text-xs text-gray-500">
+                    Reminder functionality will be available soon!
+                  </div>
+                )}
+              </div>
+              
+              <DialogFooter className="mt-6 gap-2">
+                <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+                <Button 
+                  type="submit"
+                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                >
+                  Create Task
+                </Button>
+              </DialogFooter>
+            </form>
+          </TabsContent>
+          
+          <TabsContent value="templates">
+            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+              {TASK_TEMPLATES.map((template, index) => (
+                <div 
+                  key={index}
+                  className="border border-gray-100 rounded-lg p-3 hover:shadow-sm cursor-pointer transition-all hover:border-primary/20 bg-white"
+                  onClick={() => selectTemplate(template)}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="font-medium text-gray-800">{template.title}</h4>
+                    <div className="bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
+                      {template.points} pts
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">{template.description}</p>
+                  <div className="flex items-center justify-between text-xs text-gray-400">
+                    <div className="flex items-center">
+                      <Tag className="h-3 w-3 mr-1" />
+                      {template.category}
+                    </div>
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {template.time}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="taskTime">Time (optional)</Label>
-              <Input
-                id="taskTime"
-                placeholder="e.g., Morning"
-                value={taskTime}
-                onChange={(e) => setTaskTime(e.target.value)}
-              />
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <Button 
+                onClick={() => setActiveTab("create")}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800"
+                variant="outline"
+              >
+                Create Custom Task
+              </Button>
             </div>
-          </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Add Task</Button>
-          </DialogFooter>
-        </form>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
