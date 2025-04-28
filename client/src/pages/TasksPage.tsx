@@ -21,24 +21,24 @@ export default function TasksPage() {
       {/* Tabs Navigation */}
       <div className="flex border-b border-gray-200 mb-6 overflow-x-auto hide-scrollbar">
         <Link href="/">
-          <a className="text-primary border-b-2 border-primary px-4 py-2 font-semibold text-sm font-outfit">
+          <div className="text-primary border-b-2 border-primary px-4 py-2 font-semibold text-sm font-outfit cursor-pointer">
             Tasks
-          </a>
+          </div>
         </Link>
         <Link href="/rewards">
-          <a className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit">
+          <div className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit cursor-pointer">
             Rewards
-          </a>
+          </div>
         </Link>
         <Link href="/stats">
-          <a className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit">
+          <div className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit cursor-pointer">
             Stats
-          </a>
+          </div>
         </Link>
         <Link href="/history">
-          <a className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit">
+          <div className="text-gray-500 hover:text-gray-700 px-4 py-2 font-medium text-sm font-outfit cursor-pointer">
             History
-          </a>
+          </div>
         </Link>
       </div>
       
@@ -46,18 +46,20 @@ export default function TasksPage() {
       <div className="mb-6">
         <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-5 shadow-sm border border-gray-100">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5">
-                <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                    <span className="text-xl font-bold text-gradient">{user?.username?.charAt(0) || 'D'}</span>
+            <Link href="/stats">
+              <div className="relative cursor-pointer transform hover:scale-105 transition-all floating">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5 shadow-md shadow-primary/30">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                    <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                      <span className="text-xl font-bold text-gradient">{user?.username?.charAt(0) || 'D'}</span>
+                    </div>
                   </div>
                 </div>
+                <div className="absolute bottom-0 right-0 bg-gradient-to-r from-accent to-accent/80 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-sm dot-pulse">
+                  {user?.streak || 0}
+                </div>
               </div>
-              <div className="absolute bottom-0 right-0 bg-gradient-to-r from-accent to-accent/80 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-sm">
-                {user?.streak || 0}
-              </div>
-            </div>
+            </Link>
             
             <div className="flex-1">
               <div className="flex justify-between">
@@ -68,10 +70,22 @@ export default function TasksPage() {
                     <span>{user?.streak || 0} day streak</span>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
-                  <div className="text-xs text-gray-500">Total Points</div>
-                  <div className="text-xl font-bold text-gradient">{user?.points || 0}</div>
-                </div>
+                <Link href="/rewards">
+                  <div className="flex flex-col items-end cursor-pointer group hover-card">
+                    <div className="text-xs text-gray-500 flex items-center">
+                      Total Points 
+                      <span className="ml-1 bg-accent/10 text-accent text-[10px] px-1.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        Redeem
+                      </span>
+                    </div>
+                    <div className="text-xl font-bold text-gradient flex items-center">
+                      {user?.points || 0}
+                      <span className="ml-2 text-xs font-normal bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full">
+                        {user?.points && user.points > 500 ? "You can redeem rewards!" : "Keep going!"}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               </div>
               
               <div className="mt-2">
@@ -87,8 +101,35 @@ export default function TasksPage() {
             </div>
           </div>
           
+          {/* Streak Motivation - Duolingo Style */}
+          {user?.streak && user.streak > 0 ? (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="bg-gradient-to-r from-warning/10 to-accent/10 p-3 rounded-xl mb-4">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-warning to-accent flex items-center justify-center text-white font-bold shadow-lg mr-3 floating">
+                    {user.streak}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gradient">You're on fire!</h4>
+                    <p className="text-xs text-gray-600">
+                      {user.streak === 1 ? (
+                        "Amazing first day! Keep going for more rewards."
+                      ) : user.streak < 3 ? (
+                        "Great start! 3-day streaks give bonus points!"
+                      ) : user.streak < 7 ? (
+                        "Fantastic work! Keep this up for a week to unlock achievements."
+                      ) : (
+                        "Incredible dedication! You're building powerful habits!"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           {/* Timeline for today */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className={`${user?.streak && user.streak > 0 ? '' : 'mt-4 pt-4 border-t border-gray-100'}`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-700">Today's Timeline</h3>
               <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
@@ -181,7 +222,7 @@ export default function TasksPage() {
                 {completedTasks.length > 3 && (
                   <div className="text-center py-3">
                     <Link href="/history">
-                      <div className="inline-block text-sm font-medium text-primary hover:text-primary/80 transition-colors bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-full cursor-pointer">
+                      <div className="inline-block text-sm font-medium text-primary hover:text-primary/80 transition-colors bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-full cursor-pointer hover-card">
                         View All {completedTasks.length} Completed Tasks →
                       </div>
                     </Link>
