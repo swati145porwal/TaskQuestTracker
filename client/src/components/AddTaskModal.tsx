@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, ListChecks, PenLine, Star, Tag } from "lucide-react";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion, AnimatePresence } from "framer-motion";
 
 const TASK_TEMPLATES = [
   { 
@@ -41,11 +42,11 @@ const TASK_TEMPLATES = [
 ];
 
 const TASK_CATEGORIES = [
-  { name: "Health", color: "from-green-400 to-emerald-500", icon: <Star className="h-3 w-3" /> },
+  { name: "Health", color: "from-green-400 to-emerald-500", icon: <HeartPulse className="h-3 w-3" /> },
   { name: "Work", color: "from-blue-400 to-indigo-500", icon: <ListChecks className="h-3 w-3" /> },
   { name: "Personal", color: "from-purple-400 to-violet-500", icon: <PenLine className="h-3 w-3" /> },
-  { name: "Wellness", color: "from-yellow-400 to-amber-500", icon: <Star className="h-3 w-3" /> },
-  { name: "Self-improvement", color: "from-pink-400 to-rose-500", icon: <Star className="h-3 w-3" /> }
+  { name: "Wellness", color: "from-yellow-400 to-amber-500", icon: <Sparkles className="h-3 w-3" /> },
+  { name: "Self-improvement", color: "from-pink-400 to-rose-500", icon: <Brain className="h-3 w-3" /> }
 ];
 
 export default function AddTaskModal() {
@@ -289,54 +290,108 @@ export default function AddTaskModal() {
               </div>
               
               <DialogFooter className="mt-6 gap-2">
-                <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
                 <Button 
-                  type="submit"
-                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleClose}
+                  className="hover:bg-gray-100"
                 >
-                  Create Task
+                  Cancel
                 </Button>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button 
+                    type="submit"
+                    className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-md font-medium gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Create Task
+                  </Button>
+                </motion.div>
               </DialogFooter>
             </form>
           </TabsContent>
           
           <TabsContent value="templates">
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {TASK_TEMPLATES.map((template, index) => (
-                <div 
-                  key={index}
-                  className="border border-gray-100 rounded-lg p-3 hover:shadow-sm cursor-pointer transition-all hover:border-primary/20 bg-white"
-                  onClick={() => selectTemplate(template)}
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <h4 className="font-medium text-gray-800">{template.title}</h4>
-                    <div className="bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
-                      {template.points} pts
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500 mb-2">{template.description}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <div className="flex items-center">
-                      <Tag className="h-3 w-3 mr-1" />
-                      {template.category}
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {template.time}
-                    </div>
-                  </div>
-                </div>
-              ))}
+              <AnimatePresence>
+                {TASK_TEMPLATES.map((template, index) => {
+                  // Get the category icon
+                  const categoryInfo = TASK_CATEGORIES.find(cat => cat.name === template.category);
+                  
+                  return (
+                    <motion.div 
+                      key={index}
+                      className="border border-gray-100 rounded-lg p-3 cursor-pointer transition-all hover:border-primary/20 bg-white hover-card"
+                      onClick={() => selectTemplate(template)}
+                      whileHover={{ 
+                        y: -5, 
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)", 
+                        transition: { duration: 0.2 }
+                      }}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center">
+                          <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${categoryInfo?.color || 'from-primary to-secondary'} flex items-center justify-center mr-2 shadow-sm`}>
+                            {categoryInfo?.icon || <Star className="h-4 w-4 text-white" />}
+                          </div>
+                          <h4 className="font-medium text-gray-800">{template.title}</h4>
+                        </div>
+                        <motion.div 
+                          className="bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full"
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          {template.points} pts
+                        </motion.div>
+                      </div>
+                      <p className="text-sm text-gray-500 mb-3 pl-10">{template.description}</p>
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        <div className="flex items-center bg-gray-50 px-2 py-1 rounded-full">
+                          <Tag className="h-3 w-3 mr-1" />
+                          {template.category}
+                        </div>
+                        <div className="flex items-center bg-gray-50 px-2 py-1 rounded-full">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {template.time}
+                        </div>
+                      </div>
+                      <motion.div 
+                        className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden hidden"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                      >
+                        <motion.div 
+                          className="h-full bg-gradient-to-r from-primary/60 to-secondary/60"
+                          initial={{ width: 0 }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 1.5, ease: "easeInOut" }}
+                        />
+                      </motion.div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
             
             <div className="mt-4 pt-4 border-t border-gray-100">
-              <Button 
-                onClick={() => setActiveTab("create")}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800"
-                variant="outline"
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Create Custom Task
-              </Button>
+                <Button 
+                  onClick={() => setActiveTab("create")}
+                  className="w-full bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary/20 hover:to-secondary/20 text-gray-800 font-medium"
+                  variant="outline"
+                >
+                  <PenLine className="h-4 w-4 mr-2" />
+                  Create Custom Task
+                </Button>
+              </motion.div>
             </div>
           </TabsContent>
         </Tabs>
