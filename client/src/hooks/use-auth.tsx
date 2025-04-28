@@ -18,13 +18,13 @@ type AuthContextType = {
   registerMutation: UseMutationResult<User, Error, RegisterData>;
 };
 
-// Create validation schemas
-export const loginSchema = z.object({
+// Internal validation schemas for auth mutations
+const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const registerSchema = insertUserSchema.extend({
+const registerSchema = insertUserSchema.extend({
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
@@ -150,3 +150,4 @@ export function useAuth() {
   }
   return context;
 }
+
