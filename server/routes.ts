@@ -11,6 +11,45 @@ import {
 } from "@shared/schema";
 import { createOAuth2Client, getAuthUrl, getTokens, getUserInfo } from "./services/google-auth";
 import { getCalendarEvents, convertEventsToTasks } from "./services/google-calendar";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Setup file upload middleware
+const uploadDir = path.join(process.cwd(), "uploads");
+
+// Create the uploads directory if it doesn't exist
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure storage
+const storage_config = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+
+// Create upload middleware with file type filtering
+const upload = multer({ 
+  storage: storage_config,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: function (req, file, cb) {
+    // Accept images and audio files
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('audio/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image and audio files are allowed'));
+    }
+  }
+});
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req: Request, res: Response, next: NextFunction) {
@@ -268,6 +307,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
     );
     
     res.json(completedTasksWithDetails);
+  });
+
+  // Task Proof routes
+  app.get("/api/task-proofs/:completedTaskId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const completedTaskId = parseInt(req.params.completedTaskId);
+      const userId = req.user!.id;
+      
+      if (isNaN(completedTaskId)) {
+        return res.status(400).json({ error: "Invalid completed task ID" });
+      }
+      
+      // Check if the completed task belongs to the user
+      const completedTasks = await storage.getCompletedTasks(userId);
+      const completedTask = completedTasks.find(task => task.id === completedTaskId);
+      
+      if (!completedTask) {
+        return res.status(403).json({ error: "You don't have permission to access this task's proofs" });
+      }
+      
+      const proofs = await storage.getTaskProofs(completedTaskId);
+      res.json(proofs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve task proofs" });
+    }
+  });
+
+  // File upload route for task proofs
+  app.post("/api/upload", isAuthenticated, upload.single('file'), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+      
+      // Generate relative URL for the uploaded file
+      const fileUrl = `/uploads/${path.basename(req.file.path)}`;
+      
+      // Determine file type
+      const proofType = req.file.mimetype.startsWith('image/') ? 'image' : 'audio';
+      
+      res.json({
+        success: true,
+        file: {
+          url: fileUrl,
+          type: proofType,
+          originalName: req.file.originalname,
+          size: req.file.size
+        }
+      });
+    } catch (error) {
+      console.error('File upload error:', error);
+      res.status(500).json({ error: "Failed to upload file" });
+    }
+  });
+  
+  // Serve uploaded files
+  app.use('/uploads', (req, res, next) => {
+    // Simple security check - only logged in users can access uploads
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    next();
+  }, (req, res, next) => {
+    // Use Express's static file middleware for the uploads directory
+    const options = {
+      dotfiles: 'deny',
+      maxAge: '1d',
+      index: false,
+    };
+    // This only responds to requests that weren't handled by the previous middleware
+    res.sendFile(path.join(uploadDir, req.path), options, (err) => {
+      if (err) {
+        next();
+      }
+    });
+  });
+
+  app.post("/api/task-proofs", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const { completedTaskId, proofType, proofUrl } = req.body;
+      
+      if (!completedTaskId || !proofType || !proofUrl) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Check if the completed task belongs to the user
+      const completedTasks = await storage.getCompletedTasks(userId);
+      const completedTask = completedTasks.find(task => task.id === completedTaskId);
+      
+      if (!completedTask) {
+        return res.status(403).json({ error: "You don't have permission to add proofs to this task" });
+      }
+      
+      // Validate proof type
+      if (proofType !== 'image' && proofType !== 'audio') {
+        return res.status(400).json({ error: "Invalid proof type. Must be 'image' or 'audio'" });
+      }
+      
+      const proofData = {
+        completedTaskId,
+        proofType,
+        proofUrl
+      };
+      
+      const parsedProof = insertTaskProofSchema.parse(proofData);
+      const newProof = await storage.createTaskProof(parsedProof);
+      
+      res.status(201).json(newProof);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save task proof" });
+    }
+  });
+
+  app.delete("/api/task-proofs/:proofId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const proofId = parseInt(req.params.proofId);
+      const userId = req.user!.id;
+      
+      if (isNaN(proofId)) {
+        return res.status(400).json({ error: "Invalid proof ID" });
+      }
+      
+      // Get all completed tasks for the user
+      const completedTasks = await storage.getCompletedTasks(userId);
+      
+      // Find the proof by checking all proofs from all completed tasks
+      let foundProof = null;
+      for (const task of completedTasks) {
+        const proofs = await storage.getTaskProofs(task.id);
+        const proof = proofs.find(p => p.id === proofId);
+        if (proof) {
+          foundProof = proof;
+          break;
+        }
+      }
+      
+      if (!foundProof) {
+        return res.status(404).json({ error: "Proof not found or doesn't belong to you" });
+      }
+      
+      const deleted = await storage.deleteTaskProof(proofId);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Proof not found" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete task proof" });
+    }
   });
 
   // Stats routes
