@@ -18,6 +18,19 @@ interface TopTask {
   count: number;
 }
 
+interface CompletedTaskInfo {
+  id: number;
+  userId: number;
+  taskId: number;
+  completedAt: string;
+  pointsEarned: number;
+  task?: {
+    id: number;
+    title: string;
+    time?: string;
+  };
+}
+
 export default function StatsPage() {
   const { user } = useTaskContext();
   const [stats, setStats] = useState({
@@ -30,6 +43,14 @@ export default function StatsPage() {
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStat[]>([]);
   const [topTasks, setTopTasks] = useState<TopTask[]>([]);
   const [activeChart, setActiveChart] = useState<'daily' | 'weekly'>('weekly');
+  const [dailyTaskData, setDailyTaskData] = useState<{ hour: string; tasks: number }[]>([
+    { hour: '6AM', tasks: 0 },
+    { hour: '9AM', tasks: 0 },
+    { hour: '12PM', tasks: 0 },
+    { hour: '3PM', tasks: 0 },
+    { hour: '6PM', tasks: 0 },
+    { hour: '9PM', tasks: 0 },
+  ]);
   
   useEffect(() => {
     // Fetch stats data
@@ -38,6 +59,7 @@ export default function StatsPage() {
         const statsResponse = await fetch("/api/stats");
         const weeklyResponse = await fetch("/api/stats/weekly");
         const topTasksResponse = await fetch("/api/stats/top-tasks");
+        const completedTasksResponse = await fetch("/api/completed-tasks");
         
         if (statsResponse.ok) {
           const statsData = await statsResponse.json();
@@ -53,6 +75,83 @@ export default function StatsPage() {
           const topTasksData = await topTasksResponse.json();
           setTopTasks(topTasksData);
         }
+        
+        if (completedTasksResponse.ok) {
+          const completedTasks: CompletedTaskInfo[] = await completedTasksResponse.json();
+          
+          // Process completed tasks to calculate productivity by time of day
+          if (completedTasks.length > 0) {
+            // Initialize counters
+            let morning = 0, afternoon = 0, evening = 0, night = 0, total = 0;
+            
+            // Initialize daily task data hours
+            const hourCounts: Record<number, number> = {};
+            
+            completedTasks.forEach((task: CompletedTaskInfo) => {
+              // Extract hour from completedAt timestamp
+              const completedAt = new Date(task.completedAt);
+              const hour = completedAt.getHours();
+              
+              total++;
+              
+              // Count tasks by hour for daily chart
+              hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+              
+              // Categorize by time of day for pie chart
+              if (hour >= 5 && hour < 12) {
+                morning++;
+              } else if (hour >= 12 && hour < 17) {
+                afternoon++;
+              } else if (hour >= 17 && hour < 22) {
+                evening++;
+              } else {
+                night++;
+              }
+            });
+            
+            // Update daily task data
+            setDailyTaskData([
+              { hour: '6AM', tasks: hourCounts[6] || 0 },
+              { hour: '9AM', tasks: hourCounts[9] || 0 },
+              { hour: '12PM', tasks: hourCounts[12] || 0 },
+              { hour: '3PM', tasks: hourCounts[15] || 0 },
+              { hour: '6PM', tasks: hourCounts[18] || 0 },
+              { hour: '9PM', tasks: hourCounts[21] || 0 },
+            ]);
+            
+            // Calculate percentages for pie chart
+            setProductivityByTimeOfDay([
+              { name: 'Morning', value: total ? Math.round((morning / total) * 100) : 25 },
+              { name: 'Afternoon', value: total ? Math.round((afternoon / total) * 100) : 25 },
+              { name: 'Evening', value: total ? Math.round((evening / total) * 100) : 25 },
+              { name: 'Night', value: total ? Math.round((night / total) * 100) : 25 }
+            ]);
+            
+            // Update streak data based on the last 7 days
+            const today = new Date();
+            const streakUpdates = [...streakData];
+            
+            for (let i = 0; i < 7; i++) {
+              const date = new Date(today);
+              date.setDate(date.getDate() - i);
+              const dayIndex = date.getDay();
+              
+              // Check if any tasks were completed on this day
+              const hasCompletedTasks = completedTasks.some((task: CompletedTaskInfo) => {
+                const taskDate = new Date(task.completedAt);
+                return taskDate.getDate() === date.getDate() && 
+                       taskDate.getMonth() === date.getMonth() && 
+                       taskDate.getFullYear() === date.getFullYear();
+              });
+              
+              if (hasCompletedTasks) {
+                streakUpdates[dayIndex].completed = true;
+              }
+            }
+            
+            setStreakData(streakUpdates);
+          }
+        }
       } catch (error) {
         console.error("Error fetching stats:", error);
       }
@@ -61,21 +160,23 @@ export default function StatsPage() {
     fetchStats();
   }, []);
 
-  // Generate some mock data for demonstration
-  const productivityByTimeOfDay = [
-    { name: 'Morning', value: 40 },
-    { name: 'Afternoon', value: 30 },
-    { name: 'Evening', value: 20 },
-    { name: 'Night', value: 10 }
-  ];
+  // Calculate productivity distribution from completed tasks
+  const [productivityByTimeOfDay, setProductivityByTimeOfDay] = useState([
+    { name: 'Morning', value: 0 },
+    { name: 'Afternoon', value: 0 },
+    { name: 'Evening', value: 0 },
+    { name: 'Night', value: 0 }
+  ]);
   
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--warning))'];
   
   // Prepare data for streak visualization
-  const streakData = Array.from({ length: 7 }).map((_, i) => ({
-    day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
-    completed: Math.random() > 0.3 // Just for visualization
-  }));
+  const [streakData, setStreakData] = useState(
+    Array.from({ length: 7 }).map((_, i) => ({
+      day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+      completed: false
+    }))
+  );
   
   return (
     <div className="animate-fadeIn pb-10">
@@ -256,14 +357,9 @@ export default function StatsPage() {
                   />
                 </BarChart>
               ) : (
-                <AreaChart data={[
-                  { hour: '6AM', tasks: 1 },
-                  { hour: '9AM', tasks: 2 },
-                  { hour: '12PM', tasks: 1 },
-                  { hour: '3PM', tasks: 3 },
-                  { hour: '6PM', tasks: 2 },
-                  { hour: '9PM', tasks: 1 },
-                ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart 
+                  data={dailyTaskData} 
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
