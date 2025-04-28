@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import type { Task, Reward, User, RedeemedReward } from "@shared/schema";
 
-type TabType = "tasks" | "rewards" | "stats" | "history";
+type TabType = "tasks" | "rewards" | "stats" | "history" | "profile";
 
 interface TaskContextType {
   user: User | null;
