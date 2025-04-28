@@ -218,10 +218,16 @@ export default function Header({ title }: HeaderProps) {
                 {user?.username ? `Hi, ${user.username}` : 'My Account'}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <Link href="/profile">
+                <DropdownMenuItem className="cursor-pointer">
+                  <User className="h-4 w-4 mr-2" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+              </Link>
               <Link href="/stats">
                 <DropdownMenuItem className="cursor-pointer">
                   <Settings className="h-4 w-4 mr-2" />
-                  <span>Profile & Stats</span>
+                  <span>Stats</span>
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>

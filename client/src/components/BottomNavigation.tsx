@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useTaskContext } from "@/context/TaskContext";
-import { BarChart3, Gift, History, ListTodo, Calendar } from "lucide-react";
+import { BarChart3, Gift, History, ListTodo, Calendar, User } from "lucide-react";
 
 export default function BottomNavigation() {
   const [location] = useLocation();
@@ -76,6 +76,20 @@ export default function BottomNavigation() {
         >
           <History className={`h-5 w-5 ${isActive("/history") ? "stroke-[2.5]" : ""}`} />
           <span className="text-xs mt-0.5 font-medium">History</span>
+        </div>
+      </Link>
+      
+      <Link href="/profile">
+        <div 
+          className={`flex flex-col items-center p-2 mx-1 rounded-full ${
+            isActive("/profile") 
+              ? "bg-gradient-to-r from-primary/90 to-secondary/90 text-white" 
+              : "text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary dark:hover:text-primary"
+          } transition-all cursor-pointer`}
+          onClick={() => setActiveTab("profile")}
+        >
+          <User className={`h-5 w-5 ${isActive("/profile") ? "stroke-[2.5]" : ""}`} />
+          <span className="text-xs mt-0.5 font-medium">Profile</span>
         </div>
       </Link>
     </nav>

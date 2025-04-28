@@ -10,6 +10,7 @@ import TasksPage from "@/pages/TasksPage";
 import RewardsPage from "@/pages/RewardsPage";
 import StatsPage from "@/pages/StatsPage";
 import HistoryPage from "@/pages/HistoryPage";
+import ProfilePage from "@/pages/ProfilePage";
 import CalendarPage from "@/pages/CalendarPage";
 import CalendarImportPage from "@/pages/CalendarImportPage";
 import AuthPage from "@/pages/auth-page";
@@ -62,6 +63,7 @@ function AppRouter() {
       <ProtectedRoute path="/rewards" component={RewardsPage} />
       <ProtectedRoute path="/stats" component={StatsPage} />
       <ProtectedRoute path="/history" component={HistoryPage} />
+      <ProtectedRoute path="/profile" component={ProfilePage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
