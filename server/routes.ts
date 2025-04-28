@@ -648,6 +648,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route to serve avatar images directly
+  app.get("/api/avatars/:id/image", async (req: Request, res: Response) => {
+    try {
+      const avatarId = parseInt(req.params.id);
+      
+      if (isNaN(avatarId)) {
+        return res.status(400).json({ error: "Invalid avatar ID" });
+      }
+      
+      // Get the avatar from the database
+      const avatar = await storage.getAvatar(avatarId);
+      
+      if (!avatar) {
+        return res.status(404).json({ error: "Avatar not found" });
+      }
+
+      // If the image URL starts with /, serve it directly from the public directory
+      if (avatar.imageUrl && avatar.imageUrl.startsWith('/')) {
+        // Remove the leading / to get the relative path from public
+        const imagePath = avatar.imageUrl.substring(1);
+        return res.sendFile(path.join(process.cwd(), 'public', imagePath));
+      }
+      
+      // Fallback for external URLs
+      res.redirect(avatar.imageUrl);
+    } catch (error) {
+      console.error("Error serving avatar image:", error);
+      res.status(500).json({ error: "Failed to serve avatar image" });
+    }
+  });
+
   // Avatar routes
   app.get("/api/avatars", isAuthenticated, async (req: Request, res: Response) => {
     try {
