@@ -28,7 +28,7 @@ export default function Header({ title }: HeaderProps) {
   const { user, tasks, openAddTaskModal } = useTaskContext();
   const { logoutMutation } = useAuth();
   const [, navigate] = useLocation();
-  const [viewedNotifications, setViewedNotifications] = useState(false);
+  const [viewedNotifications, setViewedNotifications] = useState(true);
   
   const handleSignOut = async () => {
     try {
@@ -98,12 +98,17 @@ export default function Header({ title }: HeaderProps) {
   
   const notifications = generateNotifications();
   
-  // Reset viewedNotifications when the notifications change (e.g., when a new task is completed)
+  // Display notifications only when needed
+  // We'll avoid resetting the viewed status too frequently to prevent notifications
+  // from constantly reappearing
   useEffect(() => {
-    if (notifications.length > 0) {
+    // Only change viewed status when new notifications appear or after explicit user actions
+    if (viewedNotifications && notifications.length > 0 && 
+        // Only show new notifications after task changes
+        (tasks?.some(t => t.isCompleted) || false)) {
       setViewedNotifications(false);
     }
-  }, [notifications.length, tasks]);
+  }, [tasks]);
   
 
   
@@ -231,7 +236,8 @@ export default function Header({ title }: HeaderProps) {
                     <User className="h-5 w-5 text-primary" />
                   )}
                 </div>
-                {user?.streak && user.streak > 0 && (
+                {/* Show only the streak badge if it's significant */}
+                {user?.streak && user.streak >= 3 && (
                   <motion.div 
                     className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
                     initial={{ scale: 0 }}
