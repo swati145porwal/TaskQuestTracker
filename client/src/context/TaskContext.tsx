@@ -24,6 +24,7 @@ interface TaskContextType {
   closeAddRewardModal: () => void;
   completeTask: (taskId: number, position: { x: number; y: number }) => Promise<void>;
   addTask: (task: Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">) => Promise<void>;
+  updateTask: (taskId: number, taskData: Partial<Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">>) => Promise<void>;
   deleteTask: (taskId: number) => Promise<void>;
   addReward: (reward: Omit<Reward, "id" | "userId">) => Promise<void>;
   redeemReward: (rewardId: number) => Promise<void>;
@@ -146,6 +147,29 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateTask = async (taskId: number, taskData: Partial<Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">>) => {
+    try {
+      const response = await apiRequest("PUT", `/api/tasks/${taskId}`, taskData);
+      if (response.ok) {
+        await refreshData();
+        toast({
+          title: "Task updated",
+          description: "Your task has been updated successfully.",
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update task. Please try again.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   const deleteTask = async (taskId: number) => {
     try {
       const response = await apiRequest("DELETE", `/api/tasks/${taskId}`, null);
@@ -262,6 +286,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     closeAddRewardModal,
     completeTask,
     addTask,
+    updateTask,
     deleteTask,
     addReward,
     redeemReward,
