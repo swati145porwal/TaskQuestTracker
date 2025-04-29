@@ -93,6 +93,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/tasks/:id", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      if (isNaN(taskId)) {
+        return res.status(400).json({ error: "Invalid task ID" });
+      }
+      
+      const task = await storage.getTask(taskId);
+      
+      if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+      
+      if (task.userId !== userId) {
+        return res.status(403).json({ error: "You don't have permission to update this task" });
+      }
+      
+      // Only allow updating title, description, points, time, date, category, googleEventId
+      const { title, description, points, time, date, category, googleEventId } = req.body;
+      
+      const updatedTask = await storage.updateTask(taskId, {
+        title,
+        description,
+        points,
+        time,
+        date,
+        category,
+        googleEventId
+      });
+      
+      res.status(200).json({
+        success: true,
+        task: updatedTask
+      });
+    } catch (error) {
+      console.error("Error updating task:", error);
+      res.status(500).json({ error: "Failed to update task" });
+    }
+  });
+
   app.put("/api/tasks/:id/complete", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const taskId = parseInt(req.params.id);

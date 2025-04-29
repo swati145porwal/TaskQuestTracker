@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTaskContext } from "@/context/TaskContext";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeToggle } from "./ThemeToggle";
@@ -29,6 +29,7 @@ export default function Header({ title }: HeaderProps) {
   const { logoutMutation } = useAuth();
   const [, navigate] = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   
   const handleSignOut = async () => {
     try {
@@ -97,6 +98,11 @@ export default function Header({ title }: HeaderProps) {
   };
   
   const notifications = generateNotifications();
+  
+  // Update notification count on mount and when notifications change
+  useEffect(() => {
+    setNotificationCount(notifications.length);
+  }, [notifications.length]);
   
   return (
     <header className="glass-effect sticky top-0 z-20 backdrop-blur-md">

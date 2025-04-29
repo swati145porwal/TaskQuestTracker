@@ -434,6 +434,13 @@ export default function TaskCard({ task }: TaskCardProps) {
         onOpenChange={setIsReminderOpen}
         task={task}
       />
+      
+      {/* Edit Task Modal */}
+      <EditTaskModal
+        task={task}
+        open={isEditTaskModalOpen}
+        onOpenChange={setIsEditTaskModalOpen}
+      />
     </motion.div>
   );
 }
