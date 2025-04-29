@@ -603,9 +603,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const topTasks = await Promise.all(
       sortedTasks.map(async ({ taskId, count }) => {
         const task = await storage.getTask(taskId);
+        
+        // Calculate the total points earned from this task type
+        const completedTasksOfType = completedTasks.filter(ct => ct.taskId === taskId);
+        const totalPoints = completedTasksOfType.reduce((sum, ct) => sum + ct.pointsEarned, 0);
+        
         return {
           task,
-          count
+          count,
+          totalPoints
         };
       })
     );
