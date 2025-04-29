@@ -16,6 +16,7 @@ interface TopTask {
     title: string;
   };
   count: number;
+  totalPoints: number;
 }
 
 interface CompletedTaskInfo {
@@ -467,7 +468,7 @@ export default function StatsPage() {
                 </div>
                 
                 <div className="flex-shrink-0 flex items-center justify-center bg-primary/10 rounded-md py-1 px-2 text-primary text-sm">
-                  +{Math.floor(item.count * (25 + Math.random() * 25))} pts
+                  +{item.totalPoints} pts
                 </div>
               </div>
             ))
