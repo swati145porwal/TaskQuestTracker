@@ -28,8 +28,7 @@ export default function Header({ title }: HeaderProps) {
   const { user, tasks, openAddTaskModal } = useTaskContext();
   const { logoutMutation } = useAuth();
   const [, navigate] = useLocation();
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [viewedNotifications, setViewedNotifications] = useState(false);
   
   const handleSignOut = async () => {
     try {
@@ -99,10 +98,14 @@ export default function Header({ title }: HeaderProps) {
   
   const notifications = generateNotifications();
   
-  // Update notification count on mount and when notifications change
+  // Reset viewedNotifications when the notifications change (e.g., when a new task is completed)
   useEffect(() => {
-    setNotificationCount(notifications.length);
-  }, [notifications.length]);
+    if (notifications.length > 0) {
+      setViewedNotifications(false);
+    }
+  }, [notifications.length, tasks]);
+  
+
   
   return (
     <header className="glass-effect sticky top-0 z-20 backdrop-blur-md">
@@ -125,7 +128,12 @@ export default function Header({ title }: HeaderProps) {
           <ThemeToggle />
           
           {/* Notifications */}
-          <Popover>
+          <Popover onOpenChange={(open) => {
+            if (open) {
+              // When popover opens, mark notifications as viewed
+              setViewedNotifications(true);
+            }
+          }}>
             <PopoverTrigger asChild>
               <motion.button 
                 className="relative p-2 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 shadow-md hover:shadow-lg transition-all"
@@ -133,7 +141,7 @@ export default function Header({ title }: HeaderProps) {
                 whileTap={{ scale: 0.95 }}
               >
                 <Bell className="h-5 w-5 text-primary" />
-                {notifications.length > 0 && (
+                {notifications.length > 0 && !viewedNotifications && (
                   <motion.div 
                     className="absolute -top-2 -right-1 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
                     initial={{ scale: 0 }}
@@ -148,7 +156,12 @@ export default function Header({ title }: HeaderProps) {
             <PopoverContent className="w-80 p-0 shadow-lg">
               <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-3 font-outfit font-semibold text-gray-700 flex justify-between items-center">
                 <span>Notifications ({notifications.length})</span>
-                <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-full">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 w-7 p-0 rounded-full"
+                  onClick={() => setViewedNotifications(true)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
