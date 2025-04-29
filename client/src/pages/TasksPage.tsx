@@ -235,22 +235,6 @@ export default function TasksPage() {
         </>
       )}
       
-      {/* Add Task Button - Top position */}
-      <div className="fixed top-20 right-6 z-10">
-        <motion.button 
-          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg hover:shadow-primary/30 transition-all"
-          onClick={openAddTaskModal}
-          whileHover={{ scale: 1.05, y: -2, boxShadow: "0 8px 15px -5px rgba(0, 0, 0, 0.2)" }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <PlusCircle className="h-5 w-5" />
-          <span className="font-medium">New Task</span>
-        </motion.button>
-      </div>
-      
       <AddTaskModal />
     </div>
   );

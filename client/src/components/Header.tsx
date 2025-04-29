@@ -124,6 +124,17 @@ export default function Header({ title }: HeaderProps) {
         </div>
         
         <div className="flex items-center space-x-3">
+          {/* Add Task Button */}
+          <motion.button 
+            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-lg hover:shadow-primary/30 transition-all"
+            onClick={openAddTaskModal}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="text-sm font-medium">New Task</span>
+          </motion.button>
+          
           {/* Theme Toggle */}
           <ThemeToggle />
           
