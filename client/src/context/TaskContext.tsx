@@ -24,7 +24,7 @@ interface TaskContextType {
   closeAddRewardModal: () => void;
   completeTask: (taskId: number, position: { x: number; y: number }) => Promise<void>;
   addTask: (task: Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">) => Promise<void>;
-  updateTask: (taskId: number, taskData: Partial<Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">>) => Promise<void>;
+  updateTask: (taskId: number, taskData: Partial<Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">>) => Promise<boolean>;
   deleteTask: (taskId: number) => Promise<void>;
   addReward: (reward: Omit<Reward, "id" | "userId">) => Promise<void>;
   redeemReward: (rewardId: number) => Promise<void>;

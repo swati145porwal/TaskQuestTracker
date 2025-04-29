@@ -9,13 +9,14 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReminderSettings from "./ReminderSettings";
+import EditTaskModal from "./EditTaskModal";
 
 interface TaskCardProps {
   task: Task;
 }
 
 export default function TaskCard({ task }: TaskCardProps) {
-  const { completeTask, deleteTask } = useTaskContext();
+  const { completeTask, deleteTask, updateTask } = useTaskContext();
   const { toast } = useToast();
   const checkboxRef = useRef<HTMLButtonElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -25,6 +26,7 @@ export default function TaskCard({ task }: TaskCardProps) {
   const [newPoints, setNewPoints] = useState(task.points.toString());
   const [showActions, setShowActions] = useState(false);
   const [isReminderOpen, setIsReminderOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   
   const handleCompleteTask = async (e: React.MouseEvent) => {
     if (task.isCompleted) return;
@@ -367,8 +369,20 @@ export default function TaskCard({ task }: TaskCardProps) {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
-        className="absolute top-3 right-3"
+        className="absolute top-3 right-3 flex space-x-2"
       >
+        {!task.isCompleted && (
+          <motion.button 
+            className="text-gray-400 hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/10 bg-white shadow-sm"
+            aria-label="Edit task"
+            whileHover={{ scale: 1.1, rotate: -5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsEditTaskModalOpen(true)}
+          >
+            <Pencil className="h-4 w-4" />
+          </motion.button>
+        )}
+        
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <motion.button 
