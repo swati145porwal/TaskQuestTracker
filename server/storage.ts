@@ -36,6 +36,7 @@ export interface IStorage {
   getTask(id: number): Promise<Task | undefined>;
   createTask(task: InsertTask): Promise<Task>;
   updateTaskCompletion(taskId: number, isCompleted: boolean): Promise<Task | undefined>;
+  updateTask(taskId: number, taskData: Partial<Omit<Task, 'id' | 'userId' | 'isCompleted' | 'createdAt'>>): Promise<Task | undefined>;
   deleteTask(taskId: number): Promise<boolean>;
   
   // Reward methods
@@ -183,6 +184,15 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .update(tasks)
       .set({ isCompleted })
+      .where(eq(tasks.id, taskId))
+      .returning();
+    return result[0];
+  }
+
+  async updateTask(taskId: number, taskData: Partial<Omit<Task, 'id' | 'userId' | 'isCompleted' | 'createdAt'>>): Promise<Task | undefined> {
+    const result = await db
+      .update(tasks)
+      .set(taskData)
       .where(eq(tasks.id, taskId))
       .returning();
     return result[0];
