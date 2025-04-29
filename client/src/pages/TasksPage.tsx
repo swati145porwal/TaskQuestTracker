@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { useTaskContext } from "@/context/TaskContext";
 import TaskCard from "@/components/TaskCard";
@@ -5,11 +6,12 @@ import ProgressBar from "@/components/ProgressBar";
 import AddTaskModal from "@/components/AddTaskModal";
 import { calculateProgress } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Flame, ListChecks, PlusCircle } from "lucide-react";
+import { Flame, ListChecks, PlusCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TasksPage() {
   const { tasks, user, openAddTaskModal } = useTaskContext();
+  const [showAllTasks, setShowAllTasks] = useState(false);
   
   const completedTasks = tasks.filter(task => task.isCompleted);
   const incompleteTasks = tasks.filter(task => !task.isCompleted);
@@ -141,7 +143,7 @@ export default function TasksPage() {
               <div className="absolute top-0 bottom-0 left-2 w-0.5 bg-gray-200"></div>
               
               {incompleteTasks.length > 0 ? (
-                incompleteTasks.slice(0, 3).map((task, index) => (
+                incompleteTasks.slice(0, showAllTasks ? incompleteTasks.length : 3).map((task, index) => (
                   <div key={task.id} className="mb-3 relative">
                     {/* Timeline dot */}
                     <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-white border-2 border-primary/50 z-10"></div>
@@ -156,9 +158,22 @@ export default function TasksPage() {
                 <div className="text-sm text-gray-500 py-2">No remaining tasks for today</div>
               )}
               
-              {incompleteTasks.length > 3 && (
-                <div className="text-xs text-primary font-medium mt-1 text-center">
+              {incompleteTasks.length > 3 && !showAllTasks && (
+                <div 
+                  className="text-xs text-primary font-medium mt-1 text-center cursor-pointer hover:underline"
+                  onClick={() => setShowAllTasks(true)}
+                >
                   +{incompleteTasks.length - 3} more tasks
+                </div>
+              )}
+              
+              {showAllTasks && (
+                <div 
+                  className="text-xs text-primary font-medium mt-1 text-center cursor-pointer hover:underline flex items-center justify-center"
+                  onClick={() => setShowAllTasks(false)}
+                >
+                  <ChevronUp className="h-3 w-3 mr-1" />
+                  Show less
                 </div>
               )}
             </div>
