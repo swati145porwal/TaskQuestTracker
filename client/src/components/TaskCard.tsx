@@ -229,6 +229,13 @@ export default function TaskCard({ task }: TaskCardProps) {
                 </div>
               )}
               
+              {!task.isCompleted && task.priority && (
+                <div className={`flex items-center text-xs bg-gradient-to-r ${priorityInfo.color} text-white px-2 py-1 rounded-full shadow-sm`}>
+                  {priorityInfo.icon}
+                  <span className="ml-1 capitalize">{priorityInfo.label}</span>
+                </div>
+              )}
+              
               {task.isCompleted && (
                 <div className="flex items-center text-success text-xs bg-success/10 px-2 py-1 rounded-full">
                   <CheckCircle className="h-3 w-3 mr-1" />

@@ -22,6 +22,7 @@ const editTaskSchema = z.object({
   description: z.string().optional(),
   points: z.coerce.number().min(1, "Points must be at least 1").max(100, "Points must be at most 100"),
   category: z.string().optional(),
+  priority: z.enum(["high", "medium", "low"]).optional(),
   time: z.string().optional(),
   date: z.string().optional(),
 });
@@ -38,6 +39,7 @@ export default function EditTaskModal({ task, open, onOpenChange }: EditTaskModa
       description: task.description || "",
       points: task.points,
       category: task.category || "",
+      priority: task.priority as "high" | "medium" | "low" || "medium",
       time: task.time || "",
       date: task.date || "",
     },
@@ -49,6 +51,7 @@ export default function EditTaskModal({ task, open, onOpenChange }: EditTaskModa
       description: data.description || null,
       points: data.points,
       category: data.category || null,
+      priority: data.priority || "medium",
       time: data.time || null,
       date: data.date || null,
     });
@@ -143,6 +146,32 @@ export default function EditTaskModal({ task, open, onOpenChange }: EditTaskModa
                         <SelectItem value="work">Work</SelectItem>
                         <SelectItem value="wellness">Wellness</SelectItem>
                         <SelectItem value="self-improvement">Self-improvement</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
