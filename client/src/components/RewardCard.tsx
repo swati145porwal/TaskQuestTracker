@@ -175,14 +175,14 @@ export default function RewardCard({ reward }: RewardCardProps) {
             )}
           </div>
           
-          <div className="mt-4 flex justify-between items-center">
+          <div className="mt-4 flex flex-col gap-3">
             <Button 
               variant={hasEnoughPoints ? "default" : "outline"}
               size="sm"
               className={
                 hasEnoughPoints 
-                  ? "bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-md gap-1.5 px-5 py-2" 
-                  : "text-gray-400 border-gray-200 gap-1.5"
+                  ? "bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-md gap-1.5 px-5 py-2 w-full" 
+                  : "text-gray-400 border-gray-200 gap-1.5 w-full"
               }
               onClick={handleRedeemReward}
               disabled={!hasEnoughPoints}
@@ -191,7 +191,7 @@ export default function RewardCard({ reward }: RewardCardProps) {
               {hasEnoughPoints ? "Redeem Now" : "Not Enough Points"}
             </Button>
             
-            <div className="flex gap-2">
+            <div className="flex justify-center gap-3">
               <motion.div whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}>
                 <Button 
                   variant="ghost" 

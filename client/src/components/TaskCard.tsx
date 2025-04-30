@@ -205,7 +205,7 @@ export default function TaskCard({ task }: TaskCardProps) {
             </div>
           </div>
           
-          <div className="flex flex-col items-end ml-4">
+          <div className="flex flex-col items-end ml-4 gap-2">
             {editingPoints ? (
               <form onSubmit={handleEditPoints} className="flex items-center gap-2">
                 <Input
@@ -227,65 +227,138 @@ export default function TaskCard({ task }: TaskCardProps) {
                 </motion.button>
               </form>
             ) : (
-              <Popover open={showActions} onOpenChange={setShowActions}>
-                <PopoverTrigger asChild>
-                  <motion.div 
-                    className={`${
-                      task.isCompleted 
-                        ? "bg-gray-200 text-gray-500" 
-                        : "bg-gradient-to-r from-primary/20 to-primary shadow-sm"
-                      } px-3 py-1.5 rounded-full text-xs font-bold flex items-center cursor-pointer`}
-                    whileHover={!task.isCompleted ? { scale: 1.05, y: -2 } : {}}
-                    onClick={() => !task.isCompleted && setShowActions(true)}
-                  >
-                    <Coins className={`h-3.5 w-3.5 ${task.isCompleted ? "text-gray-500" : "text-white"} mr-1`} />
-                    <span className={task.isCompleted ? "text-gray-500" : "text-white"}>{task.points} pts</span>
-                  </motion.div>
-                </PopoverTrigger>
-                {!task.isCompleted && (
-                  <PopoverContent className="w-48 p-2" align="end">
-                    <div className="space-y-1">
-                      <motion.button
-                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        onClick={() => setEditingPoints(true)}
-                        whileHover={{ x: 2 }}
+              <>
+                <Popover open={showActions} onOpenChange={setShowActions}>
+                  <PopoverTrigger asChild>
+                    <motion.div 
+                      className={`${
+                        task.isCompleted 
+                          ? "bg-gray-200 text-gray-500" 
+                          : "bg-gradient-to-r from-primary/20 to-primary shadow-sm"
+                        } px-3 py-1.5 rounded-full text-xs font-bold flex items-center cursor-pointer`}
+                      whileHover={!task.isCompleted ? { scale: 1.05, y: -2 } : {}}
+                      onClick={() => !task.isCompleted && setShowActions(true)}
+                    >
+                      <Coins className={`h-3.5 w-3.5 ${task.isCompleted ? "text-gray-500" : "text-white"} mr-1`} />
+                      <span className={task.isCompleted ? "text-gray-500" : "text-white"}>{task.points} pts</span>
+                    </motion.div>
+                  </PopoverTrigger>
+                  {!task.isCompleted && (
+                    <PopoverContent className="w-48 p-2" align="end">
+                      <div className="space-y-1">
+                        <motion.button
+                          className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={() => setEditingPoints(true)}
+                          whileHover={{ x: 2 }}
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-gray-600" />
+                          <span>Edit points</span>
+                        </motion.button>
+                        
+                        <motion.button
+                          className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={handleFailTask}
+                          whileHover={{ x: 2 }}
+                        >
+                          <XCircle className="h-3.5 w-3.5 text-destructive" />
+                          <span className="text-destructive">Failed to complete</span>
+                        </motion.button>
+                        
+                        <motion.button
+                          className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={() => {
+                            setIsReminderOpen(true);
+                            setShowActions(false);
+                          }}
+                          whileHover={{ x: 2 }}
+                        >
+                          <Bell className="h-3.5 w-3.5 text-gray-600" />
+                          <span>Set reminder</span>
+                        </motion.button>
+                        
+                        <motion.button
+                          className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          whileHover={{ x: 2 }}
+                        >
+                          <Repeat className="h-3.5 w-3.5 text-gray-600" />
+                          <span>Make recurring</span>
+                        </motion.button>
+                      </div>
+                    </PopoverContent>
+                  )}
+                </Popover>
+
+                {/* Action Buttons below points */}
+                <div className="flex items-center gap-2">
+                  {!task.isCompleted && (
+                    <motion.button 
+                      className="text-gray-400 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-primary/10 bg-white shadow-sm"
+                      aria-label="Edit task"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setIsEditTaskModalOpen(true)}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </motion.button>
+                  )}
+                  
+                  {task.isCompleted && (
+                    <motion.button 
+                      className="text-gray-400 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-primary/10 bg-white shadow-sm"
+                      aria-label="Share task completion"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setIsShareDialogOpen(true)}
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                    </motion.button>
+                  )}
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <motion.button 
+                        className="text-gray-400 hover:text-destructive transition-colors p-1.5 rounded-full hover:bg-destructive/10 bg-white shadow-sm"
+                        aria-label="Delete task"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                       >
-                        <Pencil className="h-3.5 w-3.5 text-gray-600" />
-                        <span>Edit points</span>
+                        <Trash2 className="h-3.5 w-3.5" />
                       </motion.button>
-                      
-                      <motion.button
-                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        onClick={handleFailTask}
-                        whileHover={{ x: 2 }}
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
                       >
-                        <XCircle className="h-3.5 w-3.5 text-destructive" />
-                        <span className="text-destructive">Failed to complete</span>
-                      </motion.button>
-                      
-                      <motion.button
-                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        onClick={() => {
-                          setIsReminderOpen(true);
-                          setShowActions(false);
-                        }}
-                        whileHover={{ x: 2 }}
-                      >
-                        <Bell className="h-3.5 w-3.5 text-gray-600" />
-                        <span>Set reminder</span>
-                      </motion.button>
-                      
-                      <motion.button
-                        className="w-full text-xs flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                        whileHover={{ x: 2 }}
-                      >
-                        <Repeat className="h-3.5 w-3.5 text-gray-600" />
-                        <span>Make recurring</span>
-                      </motion.button>
-                    </div>
-                  </PopoverContent>
-                )}
-              </Popover>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-xl text-gradient font-bold">Delete Task</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{task.title}"? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <div className="py-3">
+                          <div className="bg-destructive/5 p-3 rounded-lg border border-destructive/10 text-sm text-gray-600">
+                            Deleting this task will remove it permanently from your task list. All progress related to this task will be lost.
+                          </div>
+                        </div>
+                        <AlertDialogFooter className="gap-2">
+                          <AlertDialogCancel className="hover:bg-gray-100">Cancel</AlertDialogCancel>
+                          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                            <AlertDialogAction 
+                              onClick={() => deleteTask(task.id)} 
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Delete Task
+                            </AlertDialogAction>
+                          </motion.div>
+                        </AlertDialogFooter>
+                      </motion.div>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -377,79 +450,7 @@ export default function TaskCard({ task }: TaskCardProps) {
         )}
       </AnimatePresence>
       
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isHovered ? 1 : 0 }}
-        className="absolute top-3 right-3 flex space-x-2"
-      >
-        {!task.isCompleted && (
-          <motion.button 
-            className="text-gray-400 hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/10 bg-white shadow-sm"
-            aria-label="Edit task"
-            whileHover={{ scale: 1.1, rotate: -5 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsEditTaskModalOpen(true)}
-          >
-            <Pencil className="h-4 w-4" />
-          </motion.button>
-        )}
-        
-        {task.isCompleted && (
-          <motion.button 
-            className="text-gray-400 hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/10 bg-white shadow-sm"
-            aria-label="Share task completion"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsShareDialogOpen(true)}
-          >
-            <Share2 className="h-4 w-4" />
-          </motion.button>
-        )}
-        
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <motion.button 
-              className="text-gray-400 hover:text-destructive transition-colors p-2 rounded-full hover:bg-destructive/10 bg-white shadow-sm"
-              aria-label="Delete task"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Trash2 className="h-4 w-4" />
-            </motion.button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-xl text-gradient font-bold">Delete Task</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete "{task.title}"? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="py-3">
-                <div className="bg-destructive/5 p-3 rounded-lg border border-destructive/10 text-sm text-gray-600">
-                  Deleting this task will remove it permanently from your task list. All progress related to this task will be lost.
-                </div>
-              </div>
-              <AlertDialogFooter className="gap-2">
-                <AlertDialogCancel className="hover:bg-gray-100">Cancel</AlertDialogCancel>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <AlertDialogAction 
-                    onClick={() => deleteTask(task.id)} 
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete Task
-                  </AlertDialogAction>
-                </motion.div>
-              </AlertDialogFooter>
-            </motion.div>
-          </AlertDialogContent>
-        </AlertDialog>
-      </motion.div>
+      {/* The action buttons have been moved below the points button */}
       
       {/* Reminder Settings Dialog */}
       <ReminderSettings
