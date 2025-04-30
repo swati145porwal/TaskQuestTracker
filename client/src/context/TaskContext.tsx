@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuest } from "@/context/GuestContext";
 import type { Task, Reward, User, RedeemedReward } from "@shared/schema";
 
 type TabType = "tasks" | "rewards" | "stats" | "history" | "profile";
@@ -47,8 +48,39 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   
   const { toast } = useToast();
   const { user } = useAuth();
+  const { isGuestMode, guestUser } = useGuest();
 
-  // Fetch initial data when the user is authenticated
+  // Get the effective user (either authenticated user or guest user)
+  const effectiveUser = user || (isGuestMode ? guestUser : null);
+
+  // Store guest data in localStorage
+  const [guestTasks, setGuestTasks] = useState<Task[]>([]);
+  const [guestRewards, setGuestRewards] = useState<Reward[]>([]);
+  const [guestRedeemedRewards, setGuestRedeemedRewards] = useState<(RedeemedReward & { reward?: Reward })[]>([]);
+
+  // Initialize guest data from localStorage
+  useEffect(() => {
+    if (isGuestMode) {
+      const storedTasks = localStorage.getItem('guestTasks');
+      const storedRewards = localStorage.getItem('guestRewards');
+      const storedRedeemedRewards = localStorage.getItem('guestRedeemedRewards');
+      
+      if (storedTasks) setGuestTasks(JSON.parse(storedTasks));
+      if (storedRewards) setGuestRewards(JSON.parse(storedRewards));
+      if (storedRedeemedRewards) setGuestRedeemedRewards(JSON.parse(storedRedeemedRewards));
+    }
+  }, [isGuestMode]);
+
+  // Update localStorage when guest data changes
+  useEffect(() => {
+    if (isGuestMode) {
+      localStorage.setItem('guestTasks', JSON.stringify(guestTasks));
+      localStorage.setItem('guestRewards', JSON.stringify(guestRewards));
+      localStorage.setItem('guestRedeemedRewards', JSON.stringify(guestRedeemedRewards));
+    }
+  }, [isGuestMode, guestTasks, guestRewards, guestRedeemedRewards]);
+
+  // Fetch initial data when the user is authenticated or in guest mode
   useEffect(() => {
     if (user) {
       refreshData();

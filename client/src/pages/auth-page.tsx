@@ -75,6 +75,12 @@ export default function AuthPage() {
     await registerMutation.mutateAsync(data);
   };
 
+  // Guest mode handler
+  const handleGuestModeClick = () => {
+    enableGuestMode();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Side - Authentication Forms */}
@@ -160,7 +166,7 @@ export default function AuthPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate("/guest")}
+                    onClick={handleGuestModeClick}
                     className="w-full"
                   >
                     Continue as Guest
@@ -249,7 +255,7 @@ export default function AuthPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate("/guest")}
+                    onClick={handleGuestModeClick}
                     className="w-full"
                   >
                     Continue as Guest

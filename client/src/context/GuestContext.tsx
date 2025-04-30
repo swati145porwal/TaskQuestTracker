@@ -31,18 +31,21 @@ export function GuestProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const storedGuestMode = localStorage.getItem('guestMode');
     if (storedGuestMode === 'true') {
+      console.log('Initializing guest mode from localStorage');
       setIsGuestMode(true);
       setGuestUser(createGuestUser());
     }
   }, []);
 
   const enableGuestMode = () => {
+    console.log('Enabling guest mode');
     setIsGuestMode(true);
     setGuestUser(createGuestUser());
     localStorage.setItem('guestMode', 'true');
   };
 
   const disableGuestMode = () => {
+    console.log('Disabling guest mode');
     setIsGuestMode(false);
     setGuestUser(null);
     localStorage.removeItem('guestMode');
