@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell, Share2 } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell, Share2, Flag, AlertTriangle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReminderSettings from "./ReminderSettings";
 import EditTaskModal from "./EditTaskModal";
@@ -118,7 +118,40 @@ export default function TaskCard({ task }: TaskCardProps) {
     };
   };
   
+  // Get priority level info
+  const getTaskPriorityInfo = () => {
+    const priorityLevel = task.priority || 'medium';
+    
+    switch(priorityLevel) {
+      case 'high':
+        return {
+          label: 'High',
+          icon: <AlertCircle className="h-3 w-3" />,
+          color: 'from-red-400 to-rose-500'
+        };
+      case 'medium':
+        return {
+          label: 'Medium',
+          icon: <AlertTriangle className="h-3 w-3" />,
+          color: 'from-yellow-400 to-amber-500'
+        };
+      case 'low':
+        return {
+          label: 'Low',
+          icon: <Flag className="h-3 w-3" />,
+          color: 'from-blue-400 to-sky-500'
+        };
+      default:
+        return {
+          label: 'Medium',
+          icon: <AlertTriangle className="h-3 w-3" />,
+          color: 'from-yellow-400 to-amber-500'
+        };
+    }
+  };
+  
   const { category, icon, color } = getTaskCategoryInfo();
+  const priorityInfo = getTaskPriorityInfo();
   
   return (
     <motion.div

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, Repeat, Bell } from "lucide-react";
+import { Calendar, Clock, ListChecks, PenLine, Star, Tag, Brain, Heart, HeartPulse, Sparkles, Repeat, Bell, Flag, AlertTriangle, AlertCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -49,6 +49,12 @@ const TASK_CATEGORIES = [
   { name: "Self-improvement", color: "from-pink-400 to-rose-500", icon: <Brain className="h-3 w-3" /> }
 ];
 
+const PRIORITY_LEVELS = [
+  { name: "high", color: "from-red-400 to-rose-500", icon: <AlertCircle className="h-3 w-3" /> },
+  { name: "medium", color: "from-yellow-400 to-amber-500", icon: <AlertTriangle className="h-3 w-3" /> },
+  { name: "low", color: "from-blue-400 to-sky-500", icon: <Flag className="h-3 w-3" /> }
+];
+
 export default function AddTaskModal() {
   const { isAddTaskModalOpen, closeAddTaskModal, addTask } = useTaskContext();
   const { toast } = useToast();
@@ -58,6 +64,7 @@ export default function AddTaskModal() {
   const [taskPoints, setTaskPoints] = useState("");
   const [taskTime, setTaskTime] = useState("");
   const [taskCategory, setTaskCategory] = useState("Health");
+  const [taskPriority, setTaskPriority] = useState("medium");
   const [activeTab, setActiveTab] = useState("create");
   const [remindOnDate, setRemindOnDate] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
@@ -90,6 +97,7 @@ export default function AddTaskModal() {
         title: taskName,
         description: taskDescription,
         points: parseInt(taskPoints),
+        priority: taskPriority,
         time: taskTime,
         date: null, // Add date field which will be used with the calendar feature
         category: taskCategory,
@@ -121,6 +129,7 @@ export default function AddTaskModal() {
     setTaskPoints("");
     setTaskTime("");
     setTaskCategory("Health");
+    setTaskPriority("medium");
     setRemindOnDate(false);
     setActiveTab("create");
   };
@@ -262,6 +271,27 @@ export default function AddTaskModal() {
                     >
                       {category.icon}
                       {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Priority</Label>
+                <div className="flex flex-wrap gap-2">
+                  {PRIORITY_LEVELS.map((priority) => (
+                    <button
+                      key={priority.name}
+                      type="button"
+                      onClick={() => setTaskPriority(priority.name)}
+                      className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-all ${
+                        taskPriority === priority.name 
+                          ? `bg-gradient-to-r ${priority.color} text-white shadow-sm` 
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {priority.icon}
+                      <span className="capitalize">{priority.name}</span>
                     </button>
                   ))}
                 </div>
