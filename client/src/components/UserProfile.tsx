@@ -108,8 +108,19 @@ export default function UserProfile() {
                 <Flame className="h-5 w-5 text-orange-500" />
                 <span className="font-semibold">Current Streak</span>
               </div>
-              <span className="text-3xl font-bold text-orange-500 dark:text-orange-400">{user.streak}</span>
-              <span className="text-sm mt-1 text-muted-foreground font-medium">days</span>
+              {user.streak > 0 ? (
+                <span className="text-3xl font-bold text-orange-500 dark:text-orange-400">{user.streak}</span>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl font-bold text-orange-300 dark:text-orange-300">-</span>
+                  <span className="text-xs text-orange-400/70 mt-1">Start a streak today!</span>
+                </div>
+              )}
+              {user.streak > 0 && (
+                <span className="text-sm mt-1 text-muted-foreground font-medium">
+                  {user.streak === 1 ? "day" : "days"}
+                </span>
+              )}
             </div>
             
             <div className="flex flex-col items-center p-4 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 border border-white/10 shadow-sm">
@@ -165,7 +176,7 @@ export default function UserProfile() {
                     <span className="text-sm">3 Day Streak</span>
                   </div>
                   <Badge variant={user.streak >= 3 ? "default" : "outline"} className={user.streak >= 3 ? "bg-primary" : ""}>
-                    {user.streak >= 3 ? "Unlocked" : `${user.streak}/3`}
+                    {user.streak >= 3 ? "Unlocked" : (user.streak > 0 ? `${user.streak}/3` : "0/3")}
                   </Badge>
                 </div>
                 
@@ -175,7 +186,7 @@ export default function UserProfile() {
                     <span className="text-sm">7 Day Streak</span>
                   </div>
                   <Badge variant={user.streak >= 7 ? "default" : "outline"} className={user.streak >= 7 ? "bg-primary" : ""}>
-                    {user.streak >= 7 ? "Unlocked" : `${user.streak}/7`}
+                    {user.streak >= 7 ? "Unlocked" : (user.streak > 0 ? `${user.streak}/7` : "0/7")}
                   </Badge>
                 </div>
                 
@@ -185,7 +196,7 @@ export default function UserProfile() {
                     <span className="text-sm">14 Day Streak</span>
                   </div>
                   <Badge variant={user.streak >= 14 ? "default" : "outline"} className={user.streak >= 14 ? "bg-primary" : ""}>
-                    {user.streak >= 14 ? "Unlocked" : `${user.streak}/14`}
+                    {user.streak >= 14 ? "Unlocked" : (user.streak > 0 ? `${user.streak}/14` : "0/14")}
                   </Badge>
                 </div>
                 
@@ -195,7 +206,7 @@ export default function UserProfile() {
                     <span className="text-sm">30 Day Streak</span>
                   </div>
                   <Badge variant={user.streak >= 30 ? "default" : "outline"} className={user.streak >= 30 ? "bg-primary" : ""}>
-                    {user.streak >= 30 ? "Unlocked" : `${user.streak}/30`}
+                    {user.streak >= 30 ? "Unlocked" : (user.streak > 0 ? `${user.streak}/30` : "0/30")}
                   </Badge>
                 </div>
               </div>
@@ -306,8 +317,17 @@ export default function UserProfile() {
             </div>
             
             <div className="bg-success/10 text-success text-sm px-4 py-2 rounded-full mb-4">
-              <Flame className="h-4 w-4 inline-block mr-1" />
-              <span>{user.streak} day streak with {user.points} total points!</span>
+              {user.streak > 0 ? (
+                <>
+                  <Flame className="h-4 w-4 inline-block mr-1" />
+                  <span>{user.streak} day streak with {user.points} total points!</span>
+                </>
+              ) : (
+                <>
+                  <Trophy className="h-4 w-4 inline-block mr-1" />
+                  <span>Started my journey with {user.points} points so far!</span>
+                </>
+              )}
             </div>
           </div>
           
@@ -315,8 +335,11 @@ export default function UserProfile() {
             <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
               <h4 className="text-sm font-medium mb-3">Share options:</h4>
               <SocialShareComponent 
-                title="Check out my productivity streak!"
-                description={`I've maintained a ${user.streak}-day streak and earned ${user.points} points on TaskQuest. Join me in building better habits!`}
+                title={user.streak > 0 ? "Check out my productivity streak!" : "Just started my productivity journey!"}
+                description={user.streak > 0
+                  ? `I've maintained a ${user.streak}-day streak and earned ${user.points} points on TaskQuest. Join me in building better habits!`
+                  : `I'm using TaskQuest to build better habits and have earned ${user.points} points so far. Join me on this journey!`
+                }
                 variant="default"
                 className="w-full justify-center"
               />
