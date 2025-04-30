@@ -17,16 +17,31 @@ import {
   Star, 
   Flame,
   Calendar,
-  Edit
+  Edit,
+  Share2,
+  Link
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import AvatarSelector from "./AvatarSelector";
 import { useTaskContext } from "@/context/TaskContext";
+import SocialShareComponent from "./SocialShareComponent";
+import SocialConnectComponent from "./SocialConnectComponent";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle,
+  DialogClose,
+  DialogFooter
+} from "@/components/ui/dialog";
 
 export default function UserProfile() {
   const { user } = useAuth();
   const { refreshData } = useTaskContext();
   const [isAvatarSelectorOpen, setIsAvatarSelectorOpen] = useState(false);
+  const [isSocialShareOpen, setIsSocialShareOpen] = useState(false);
+  const [isSocialConnectOpen, setIsSocialConnectOpen] = useState(false);
 
   if (!user) {
     return null;
@@ -199,7 +214,37 @@ export default function UserProfile() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
-          <div className="w-full flex justify-center gap-2">
+          {/* Social media section */}
+          <div className="w-full p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-white/10 shadow-sm">
+            <h3 className="text-base font-medium mb-3 flex items-center gap-2">
+              <Share2 className="h-5 w-5 text-primary" />
+              <span>Social & Share</span>
+            </h3>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsSocialShareOpen(true)}
+                className="bg-primary/10 hover:bg-primary/20 border-white/10 gap-1.5"
+              >
+                <Share2 className="h-4 w-4" />
+                Share Progress
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsSocialConnectOpen(true)}
+                className="bg-primary/10 hover:bg-primary/20 border-white/10 gap-1.5"
+              >
+                <Link className="h-4 w-4" />
+                Connect Accounts
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-full flex justify-center gap-2 mt-3">
             <Button 
               variant="outline" 
               size="sm" 
@@ -242,6 +287,87 @@ export default function UserProfile() {
         currentAvatarId={user.currentAvatarId || null}
         userStreak={user.streak}
       />
+
+      {/* Social Share Dialog */}
+      <Dialog open={isSocialShareOpen} onOpenChange={setIsSocialShareOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-center font-bold">
+              <span className="text-gradient">Share Your Progress</span>
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              Share your achievements with friends and inspire them to join TaskQuest!
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center py-4">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shadow-lg mb-4">
+              <Trophy className="h-10 w-10 text-white" />
+            </div>
+            
+            <div className="bg-success/10 text-success text-sm px-4 py-2 rounded-full mb-4">
+              <Flame className="h-4 w-4 inline-block mr-1" />
+              <span>{user.streak} day streak with {user.points} total points!</span>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+              <h4 className="text-sm font-medium mb-3">Share options:</h4>
+              <SocialShareComponent 
+                title="Check out my productivity streak!"
+                description={`I've maintained a ${user.streak}-day streak and earned ${user.points} points on TaskQuest. Join me in building better habits!`}
+                variant="default"
+                className="w-full justify-center"
+              />
+            </div>
+            
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button>Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Social Connect Dialog */}
+      <Dialog open={isSocialConnectOpen} onOpenChange={setIsSocialConnectOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-center font-bold">
+              <span className="text-gradient">Connect Accounts</span>
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              Connect your social accounts to enhance your TaskQuest experience
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+              <h4 className="text-sm font-medium mb-3">Your connected accounts:</h4>
+              <SocialConnectComponent 
+                variant="default"
+                className="w-full"
+                onConnect={(platform) => {
+                  console.log(`Connected to ${platform}`);
+                  // Handle connection logic here
+                }}
+              />
+            </div>
+            
+            <div className="mt-4 text-xs text-center text-muted-foreground">
+              Connecting accounts allows for easier sharing and syncing your achievements across platforms.
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
