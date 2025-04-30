@@ -18,6 +18,7 @@ interface TaskContextType {
   showPointsAnimation: boolean;
   pointsAnimationValue: number;
   pointsAnimationPosition: { x: number; y: number };
+  isGuestMode: boolean;
   setActiveTab: (tab: TabType) => void;
   openAddTaskModal: () => void;
   closeAddTaskModal: () => void;
@@ -88,8 +89,18 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   const refreshData = async () => {
-    if (!user) return;
+    // Skip if no user is available and not in guest mode
+    if (!user && !isGuestMode) return;
     
+    // If in guest mode, use local state instead of API calls
+    if (isGuestMode) {
+      setTasks(guestTasks);
+      setRewards(guestRewards);
+      setRedeemedRewards(guestRedeemedRewards);
+      return;
+    }
+    
+    // Regular user with API calls
     try {
       const tasksResponse = await fetch("/api/tasks");
       const rewardsResponse = await fetch("/api/rewards");
@@ -126,6 +137,64 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const completeTask = async (taskId: number, position: { x: number; y: number }) => {
     try {
+      // Guest mode task completion
+      if (isGuestMode && guestUser) {
+        // Find the task in the guest tasks
+        const taskIndex = guestTasks.findIndex(t => t.id === taskId);
+        if (taskIndex === -1) {
+          throw new Error("Task not found");
+        }
+        
+        const task = guestTasks[taskIndex];
+        const pointsEarned = task.points;
+        
+        // Update the task as completed
+        const updatedTasks = [...guestTasks];
+        updatedTasks[taskIndex] = {
+          ...task,
+          isCompleted: true
+        };
+        
+        // Update the guest user points
+        const updatedGuestUser = {
+          ...guestUser,
+          points: (guestUser.points || 0) + pointsEarned
+        };
+        
+        // Add to completed tasks
+        const newCompletedTask = {
+          id: Date.now(), // Use timestamp as a simple ID
+          userId: guestUser.id,
+          taskId: task.id,
+          completedAt: new Date(),
+          pointsEarned: pointsEarned
+        };
+        
+        // Update all the state
+        setGuestTasks(updatedTasks);
+        
+        // Show points animation
+        setPointsAnimationValue(pointsEarned);
+        setPointsAnimationPosition(position);
+        setShowPointsAnimation(true);
+        
+        // Hide animation after 1.5 seconds
+        setTimeout(() => {
+          setShowPointsAnimation(false);
+        }, 1500);
+        
+        // Refresh data to update the UI
+        setTasks(updatedTasks);
+        
+        toast({
+          title: "Task completed!",
+          description: `You earned ${pointsEarned} points.`,
+        });
+        
+        return;
+      }
+      
+      // Regular user task completion with API
       const response = await apiRequest("PUT", `/api/tasks/${taskId}/complete`, null);
       const data = await response.json();
       
@@ -160,6 +229,34 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const addTask = async (task: Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">) => {
     try {
+      // Handle task creation in guest mode
+      if (isGuestMode && guestUser) {
+        // Create a new task with a temporary ID
+        const newTask: Task = {
+          ...task,
+          id: Date.now(), // Use timestamp as a simple ID
+          userId: guestUser.id,
+          isCompleted: false,
+          createdAt: new Date()
+        };
+        
+        // Add to guest tasks
+        const updatedTasks = [...guestTasks, newTask];
+        setGuestTasks(updatedTasks);
+        
+        // Update the UI
+        setTasks(updatedTasks);
+        
+        closeAddTaskModal();
+        toast({
+          title: "Task added",
+          description: "Your new task has been added successfully.",
+        });
+        
+        return;
+      }
+      
+      // Regular user task creation with API
       const response = await apiRequest("POST", "/api/tasks", task);
       if (response.ok) {
         await refreshData();
@@ -181,6 +278,35 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const updateTask = async (taskId: number, taskData: Partial<Omit<Task, "id" | "userId" | "isCompleted" | "createdAt">>) => {
     try {
+      // Handle task update in guest mode
+      if (isGuestMode) {
+        // Find the task index
+        const taskIndex = guestTasks.findIndex(t => t.id === taskId);
+        if (taskIndex === -1) {
+          throw new Error("Task not found");
+        }
+        
+        // Update the task
+        const updatedTasks = [...guestTasks];
+        updatedTasks[taskIndex] = {
+          ...updatedTasks[taskIndex],
+          ...taskData
+        };
+        
+        // Update state
+        setGuestTasks(updatedTasks);
+        
+        // Update UI
+        setTasks(updatedTasks);
+        
+        toast({
+          title: "Task updated",
+          description: "Your task has been updated successfully.",
+        });
+        return true;
+      }
+      
+      // Regular user task update with API
       const response = await apiRequest("PUT", `/api/tasks/${taskId}`, taskData);
       if (response.ok) {
         await refreshData();
@@ -204,6 +330,26 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const deleteTask = async (taskId: number) => {
     try {
+      // Handle task deletion in guest mode
+      if (isGuestMode) {
+        // Filter out the task to delete
+        const updatedTasks = guestTasks.filter(task => task.id !== taskId);
+        
+        // Update state
+        setGuestTasks(updatedTasks);
+        
+        // Update UI
+        setTasks(updatedTasks);
+        
+        toast({
+          title: "Task deleted",
+          description: "Your task has been deleted successfully.",
+        });
+        
+        return;
+      }
+      
+      // Regular user task deletion with API
       const response = await apiRequest("DELETE", `/api/tasks/${taskId}`, null);
       if (response.ok) {
         await refreshData();
@@ -224,6 +370,32 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const addReward = async (reward: Omit<Reward, "id" | "userId">) => {
     try {
+      // Handle reward creation in guest mode
+      if (isGuestMode && guestUser) {
+        // Create a new reward with a temporary ID
+        const newReward: Reward = {
+          ...reward,
+          id: Date.now(), // Use timestamp as a simple ID
+          userId: guestUser.id
+        };
+        
+        // Add to guest rewards
+        const updatedRewards = [...guestRewards, newReward];
+        setGuestRewards(updatedRewards);
+        
+        // Update the UI
+        setRewards(updatedRewards);
+        
+        closeAddRewardModal();
+        toast({
+          title: "Reward added",
+          description: "Your new reward has been added successfully.",
+        });
+        
+        return;
+      }
+      
+      // Regular user reward creation with API
       const response = await apiRequest("POST", "/api/rewards", reward);
       if (response.ok) {
         await refreshData();
@@ -251,6 +423,50 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         throw new Error("Reward not found");
       }
       
+      // Handle guest mode reward redemption
+      if (isGuestMode && guestUser) {
+        // Check if guest has enough points
+        if (guestUser.points < reward.points) {
+          toast({
+            title: "Not enough points",
+            description: `You need ${reward.points - guestUser.points} more points to redeem this reward.`,
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Update guest user points
+        const updatedGuestUser = {
+          ...guestUser,
+          points: guestUser.points - reward.points
+        };
+        
+        // Create redeemed reward
+        const newRedeemedReward = {
+          id: Date.now(),
+          userId: guestUser.id,
+          rewardId: reward.id,
+          pointsSpent: reward.points,
+          redeemedAt: new Date(),
+          reward: reward
+        };
+        
+        // Update guest redeemed rewards
+        const updatedRedeemedRewards = [...guestRedeemedRewards, newRedeemedReward];
+        setGuestRedeemedRewards(updatedRedeemedRewards);
+        
+        // Update UI
+        setRedeemedRewards(updatedRedeemedRewards);
+        
+        toast({
+          title: "Reward redeemed!",
+          description: `You redeemed ${reward.title} for ${reward.points} points.`,
+        });
+        
+        return;
+      }
+      
+      // Check if authenticated user has enough points
       if (user && user.points < reward.points) {
         toast({
           title: "Not enough points",
@@ -260,6 +476,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         return;
       }
       
+      // Regular user reward redemption with API
       const response = await apiRequest("POST", `/api/rewards/${rewardId}/redeem`, null);
       const data = await response.json();
       
@@ -282,6 +499,26 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const deleteReward = async (rewardId: number) => {
     try {
+      // Handle reward deletion in guest mode
+      if (isGuestMode) {
+        // Filter out the reward to delete
+        const updatedRewards = guestRewards.filter(reward => reward.id !== rewardId);
+        
+        // Update state
+        setGuestRewards(updatedRewards);
+        
+        // Update UI
+        setRewards(updatedRewards);
+        
+        toast({
+          title: "Reward deleted",
+          description: "Your reward has been deleted successfully.",
+        });
+        
+        return;
+      }
+      
+      // Regular user reward deletion with API
       const response = await apiRequest("DELETE", `/api/rewards/${rewardId}`, null);
       if (response.ok) {
         await refreshData();
@@ -301,7 +538,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   };
 
   const value = {
-    user,
+    user: isGuestMode ? guestUser : user,
     tasks,
     rewards,
     redeemedRewards,
@@ -311,6 +548,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     showPointsAnimation,
     pointsAnimationValue,
     pointsAnimationPosition,
+    isGuestMode,
     setActiveTab,
     openAddTaskModal,
     closeAddTaskModal,
