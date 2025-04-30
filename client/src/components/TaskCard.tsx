@@ -6,10 +6,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Coins, Trash2, Star, ListChecks, BookOpen, HeartPulse, Brain, Pencil, Undo, Calendar, Repeat, Check, Bell, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReminderSettings from "./ReminderSettings";
 import EditTaskModal from "./EditTaskModal";
+import SocialShareComponent from "./SocialShareComponent";
 
 interface TaskCardProps {
   task: Task;
@@ -322,12 +323,19 @@ export default function TaskCard({ task }: TaskCardProps) {
               <CheckCircle className="h-12 w-12" />
             </motion.div>
             <motion.div
+              className="absolute bottom-4 flex flex-col items-center gap-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.4 }}
-              className="absolute bottom-4 text-center bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-success"
             >
-              Task completed! 🎉
+              <div className="text-center bg-white px-4 py-2 rounded-full shadow-md text-sm font-medium text-success">
+                Task completed! 🎉
+              </div>
+              <SocialShareComponent 
+                variant="compact" 
+                points={task.points}
+                taskTitle={task.title}
+              />
             </motion.div>
           </motion.div>
         )}
@@ -381,6 +389,21 @@ export default function TaskCard({ task }: TaskCardProps) {
           >
             <Pencil className="h-4 w-4" />
           </motion.button>
+        )}
+        
+        {task.isCompleted && (
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <SocialShareComponent 
+              variant="button" 
+              points={task.points}
+              taskTitle={task.title}
+              title="Share your achievement!"
+              description={`You earned ${task.points} points for completing "${task.title}"`}
+            />
+          </motion.div>
         )}
         
         <AlertDialog>
