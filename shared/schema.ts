@@ -31,6 +31,7 @@ export const tasks = pgTable("tasks", {
   title: text("title").notNull(),
   description: text("description"),
   points: integer("points").notNull(),
+  priority: text("priority").default("medium"), // Options: "high", "medium", "low"
   time: text("time"),
   date: text("date"),
   category: text("category"),
@@ -93,6 +94,7 @@ export const insertTaskSchema = createInsertSchema(tasks).pick({
   title: true,
   description: true,
   points: true,
+  priority: true,
   time: true,
   date: true,
   category: true,
