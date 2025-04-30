@@ -26,15 +26,40 @@ const createGuestUser = (): User => ({
 export function GuestProvider({ children }: { children: ReactNode }) {
   const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
   const [guestUser, setGuestUser] = useState<User | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
 
-  // Initialize guest mode from localStorage if available
+  // Check for authenticated user first, then initialize guest mode if needed
   useEffect(() => {
-    const storedGuestMode = localStorage.getItem('guestMode');
-    if (storedGuestMode === 'true') {
-      console.log('Initializing guest mode from localStorage');
-      setIsGuestMode(true);
-      setGuestUser(createGuestUser());
-    }
+    // Check if user is logged in
+    fetch('/api/user')
+      .then(res => {
+        if (res.ok && res.status !== 401) {
+          // User is logged in, disable guest mode
+          localStorage.removeItem('guestMode');
+          setIsGuestMode(false);
+          setGuestUser(null);
+        } else {
+          // User is not logged in, check for guest mode
+          const storedGuestMode = localStorage.getItem('guestMode');
+          if (storedGuestMode === 'true') {
+            console.log('Initializing guest mode from localStorage');
+            setIsGuestMode(true);
+            setGuestUser(createGuestUser());
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Error checking authentication:', err);
+        // On error, check for guest mode as fallback
+        const storedGuestMode = localStorage.getItem('guestMode');
+        if (storedGuestMode === 'true') {
+          setIsGuestMode(true);
+          setGuestUser(createGuestUser());
+        }
+      })
+      .finally(() => {
+        setCheckingAuth(false);
+      });
   }, []);
 
   const enableGuestMode = () => {
