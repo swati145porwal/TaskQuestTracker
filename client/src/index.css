@@ -89,7 +89,8 @@
       radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.03), transparent 30%);
     min-height: 100vh;
   }
-  
+
+  /* Dark mode specific background */
   .dark body {
     background-color: hsl(224 71% 4%);
     background-image: 
@@ -224,5 +225,51 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Social sharing styles */
+.social-icon {
+  @apply transition-all duration-200 rounded-full flex items-center justify-center;
+  width: 40px;
+  height: 40px;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px);
+}
+
+.social-icon-facebook {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.social-icon-twitter {
+  @apply bg-sky-500 text-white hover:bg-sky-600;
+}
+
+.social-icon-linkedin {
+  @apply bg-blue-700 text-white hover:bg-blue-800;
+}
+
+.social-icon-instagram {
+  @apply text-white;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-icon-instagram:hover {
+  background: linear-gradient(45deg, #e6863d 0%, #d35c37 25%, #c52340 50%, #b9225d 75%, #a91880 100%);
+}
+
+.dark .social-share-card {
+  @apply bg-gray-800/80 border-gray-700;
+}
+
+/* Social connection section */
+.social-connect-section {
+  @apply rounded-lg p-4 transition-all;
+  background: linear-gradient(to right, rgba(66, 153, 225, 0.05), rgba(49, 130, 206, 0.1));
+}
+
+.dark .social-connect-section {
+  background: linear-gradient(to right, rgba(49, 130, 206, 0.1), rgba(66, 153, 225, 0.05));
 }
 
