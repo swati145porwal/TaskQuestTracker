@@ -11,6 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReminderSettings from "./ReminderSettings";
 import EditTaskModal from "./EditTaskModal";
 import SocialShareComponent from "./SocialShareComponent";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface TaskCardProps {
   task: Task;
@@ -28,6 +30,7 @@ export default function TaskCard({ task }: TaskCardProps) {
   const [showActions, setShowActions] = useState(false);
   const [isReminderOpen, setIsReminderOpen] = useState(false);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   
   const handleCompleteTask = async (e: React.MouseEvent) => {
     if (task.isCompleted) return;
@@ -392,18 +395,15 @@ export default function TaskCard({ task }: TaskCardProps) {
         )}
         
         {task.isCompleted && (
-          <motion.div
+          <motion.button 
+            className="text-gray-400 hover:text-primary transition-colors p-2 rounded-full hover:bg-primary/10 bg-white shadow-sm"
+            aria-label="Share task completion"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            onClick={() => setIsShareDialogOpen(true)}
           >
-            <SocialShareComponent 
-              variant="button" 
-              points={task.points}
-              taskTitle={task.title}
-              title="Share your achievement!"
-              description={`You earned ${task.points} points for completing "${task.title}"`}
-            />
-          </motion.div>
+            <Share2 className="h-4 w-4" />
+          </motion.button>
         )}
         
         <AlertDialog>
@@ -464,6 +464,57 @@ export default function TaskCard({ task }: TaskCardProps) {
         open={isEditTaskModalOpen}
         onOpenChange={setIsEditTaskModalOpen}
       />
+
+      {/* Share Task Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-center font-bold">
+              <span className="text-gradient">Share Your Achievement</span>
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              Share your completed task with friends and inspire them!
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center py-4">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-success to-success/70 flex items-center justify-center shadow-lg mb-4">
+              <CheckCircle className="h-10 w-10 text-white" />
+            </div>
+            
+            <div className="bg-success/10 text-success text-sm px-4 py-2 rounded-full mb-4">
+              <span>You earned {task.points} points for this task!</span>
+            </div>
+            
+            <div className="bg-white text-gray-800 shadow-md rounded-lg p-4 max-w-xs text-center my-3">
+              <span className="font-medium text-base">{task.title}</span>
+              {task.description && (
+                <p className="text-sm text-gray-500 mt-1">{task.description.replace(/\[.*?\]/g, '')}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+              <h4 className="text-sm font-medium mb-3">Share options:</h4>
+              <SocialShareComponent 
+                title="I completed this task!"
+                description={`I just earned ${task.points} points for completing "${task.title}" on TaskQuest! Join me and start building better habits.`}
+                variant="default"
+                className="w-full justify-center"
+                taskTitle={task.title}
+                points={task.points}
+              />
+            </div>
+            
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button>Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
