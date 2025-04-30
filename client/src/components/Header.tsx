@@ -152,33 +152,30 @@ export default function Header({ title }: HeaderProps) {
           }}>
             <PopoverTrigger asChild>
               <motion.button 
-                className="relative p-2 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 shadow-md hover:shadow-lg transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="relative p-2 rounded-md bg-muted/80 hover:bg-muted transition-all"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <Bell className="h-5 w-5 text-primary" />
+                <Bell className="h-4 w-4 text-muted-foreground" />
                 {notifications.length > 0 && !viewedNotifications && (
-                  <motion.div 
-                    className="absolute -top-2 -right-1 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  <div 
+                    className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
                   >
                     {notifications.length}
-                  </motion.div>
+                  </div>
                 )}
               </motion.button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 p-0 shadow-lg">
-              <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-3 font-outfit font-semibold text-gray-700 flex justify-between items-center">
+            <PopoverContent className="w-80 p-0 shadow-sm">
+              <div className="bg-muted p-3 font-outfit text-sm text-foreground flex justify-between items-center border-b">
                 <span>Notifications ({notifications.length})</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-7 w-7 p-0 rounded-full"
+                  className="h-6 w-6 p-0"
                   onClick={() => setViewedNotifications(true)}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </Button>
               </div>
               <div className="max-h-[300px] overflow-y-auto">
@@ -189,31 +186,28 @@ export default function Header({ title }: HeaderProps) {
                 ) : (
                   <AnimatePresence>
                     {notifications.map((notification) => (
-                      <motion.div 
+                      <div 
                         key={notification.id}
-                        className="border-b border-gray-100 last:border-0 p-3 hover:bg-gray-50 cursor-pointer"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
+                        className="border-b border-muted p-3 hover:bg-muted/50 cursor-pointer"
                         onClick={notification.action}
                       >
                         <div className="flex items-start">
-                          <div className="flex-shrink-0 bg-gradient-to-r from-primary/20 to-secondary/20 p-2 rounded-full mr-3">
+                          <div className="flex-shrink-0 bg-background p-1.5 rounded-md mr-2 border">
                             {notification.icon}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-800">
+                            <p className="text-sm font-medium text-foreground">
                               {notification.title}
                             </p>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                               {notification.content}
                             </p>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-muted-foreground/70 mt-1">
                               {notification.time}
                             </p>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </AnimatePresence>
                 )}
@@ -226,26 +220,23 @@ export default function Header({ title }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <motion.div 
                 className="relative cursor-pointer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <div className="rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 w-10 h-10 flex items-center justify-center shadow-md border border-white/50">
+                <div className="rounded-md bg-muted/80 w-9 h-9 flex items-center justify-center border">
                   {user?.username ? (
-                    <span className="text-primary font-medium">{user.username[0]}</span>
+                    <span className="text-foreground font-medium">{user.username[0]}</span>
                   ) : (
-                    <User className="h-5 w-5 text-primary" />
+                    <User className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
                 {/* Show only the streak badge if it's significant */}
                 {user?.streak && user.streak >= 3 && (
-                  <motion.div 
-                    className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  <div 
+                    className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
                   >
                     {user.streak}
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
             </DropdownMenuTrigger>

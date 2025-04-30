@@ -153,6 +153,17 @@ export default function AuthPage() {
                     Register here
                   </button>
                 </div>
+                
+                <div className="mt-6 text-center">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/guest")}
+                    className="w-full"
+                  >
+                    Continue as Guest
+                  </Button>
+                </div>
               </TabsContent>
               
               {/* Register Form */}
@@ -230,6 +241,17 @@ export default function AuthPage() {
                   >
                     Login here
                   </button>
+                </div>
+                
+                <div className="mt-6 text-center">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/guest")}
+                    className="w-full"
+                  >
+                    Continue as Guest
+                  </Button>
                 </div>
               </TabsContent>
             </Tabs>
