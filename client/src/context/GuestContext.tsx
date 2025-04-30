@@ -1,6 +1,5 @@
-import { createContext, ReactNode, useState, useContext, useEffect } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { User } from "@shared/schema";
-import { useToast } from "@/hooks/use-toast";
 
 type GuestContextType = {
   isGuestMode: boolean;
@@ -11,28 +10,27 @@ type GuestContextType = {
 
 export const GuestContext = createContext<GuestContextType | null>(null);
 
-// Create mock guest user data
+// Create a mock guest user
 const createGuestUser = (): User => ({
-  id: -1, // Use negative ID to indicate guest user
+  id: -1, // Use a negative ID to ensure it doesn't conflict with real user IDs
   username: "Guest",
-  password: "", // Password is required in the type but not used for guest
+  password: "", // Password is never used in the client
   points: 0,
   streak: 0,
+  currentAvatarId: null,
   googleRefreshToken: null,
   googleEmail: null,
   googlePictureUrl: null,
-  currentAvatarId: null
 });
 
 export function GuestProvider({ children }: { children: ReactNode }) {
-  const { toast } = useToast();
   const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
   const [guestUser, setGuestUser] = useState<User | null>(null);
 
-  // Check if guest mode was previously enabled
+  // Initialize guest mode from localStorage if available
   useEffect(() => {
-    const storedGuestMode = localStorage.getItem("guestMode");
-    if (storedGuestMode === "true") {
+    const storedGuestMode = localStorage.getItem('guestMode');
+    if (storedGuestMode === 'true') {
       setIsGuestMode(true);
       setGuestUser(createGuestUser());
     }
@@ -40,20 +38,14 @@ export function GuestProvider({ children }: { children: ReactNode }) {
 
   const enableGuestMode = () => {
     setIsGuestMode(true);
-    const newGuestUser = createGuestUser();
-    setGuestUser(newGuestUser);
-    localStorage.setItem("guestMode", "true");
-    
-    toast({
-      title: "Guest Mode Enabled",
-      description: "You're browsing as a guest. Your data won't be saved.",
-    });
+    setGuestUser(createGuestUser());
+    localStorage.setItem('guestMode', 'true');
   };
 
   const disableGuestMode = () => {
     setIsGuestMode(false);
     setGuestUser(null);
-    localStorage.removeItem("guestMode");
+    localStorage.removeItem('guestMode');
   };
 
   return (

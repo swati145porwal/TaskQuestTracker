@@ -45,6 +45,36 @@ export default function Header({ title }: HeaderProps) {
   const generateNotifications = () => {
     const notifications = [];
     
+    // Guest mode notification
+    if (isGuestMode) {
+      notifications.push({
+        id: 'guest-mode',
+        title: 'Guest Mode Active',
+        content: "Your data won't be saved. Sign in to save your progress.",
+        icon: <User className="h-5 w-5 text-yellow-500" />,
+        time: 'Now',
+        action: () => {
+          disableGuestMode();
+          navigate('/auth');
+        }
+      });
+      
+      // Add task reminder for guest users too
+      if ((tasks?.length || 0) < 3) {
+        notifications.push({
+          id: 'add-tasks',
+          title: 'Add Your First Tasks',
+          content: "Try creating some tasks to see how the app works.",
+          icon: <Plus className="h-5 w-5 text-primary" />,
+          time: 'Now',
+          action: () => openAddTaskModal()
+        });
+      }
+      
+      return notifications;
+    }
+    
+    // Regular user notifications
     // Streak notification
     if (user?.streak) {
       notifications.push({
@@ -225,44 +255,90 @@ export default function Header({ title }: HeaderProps) {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                <div className="rounded-md bg-muted/80 w-9 h-9 flex items-center justify-center border">
-                  {user?.username ? (
+                <div className={`rounded-md w-9 h-9 flex items-center justify-center border ${isGuestMode ? 'bg-yellow-100 dark:bg-yellow-950/50' : 'bg-muted/80'}`}>
+                  {isGuestMode ? (
+                    <span className="text-yellow-600 dark:text-yellow-400 font-medium">G</span>
+                  ) : user?.username ? (
                     <span className="text-foreground font-medium">{user.username[0]}</span>
                   ) : (
                     <User className="h-4 w-4 text-muted-foreground" />
                   )}
                 </div>
-                {/* Show only the streak badge if it's significant */}
-                {user?.streak && user.streak >= 3 && (
+                {/* Show only the streak badge if it's significant and not in guest mode */}
+                {!isGuestMode && user?.streak && user.streak >= 3 && (
                   <div 
                     className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
                   >
                     {user.streak}
                   </div>
                 )}
+                
+                {/* Show guest mode indicator */}
+                {isGuestMode && (
+                  <div 
+                    className="absolute -top-1 -right-1 bg-yellow-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
+                  >
+                    !
+                  </div>
+                )}
               </motion.div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                {user?.username ? `Hi, ${user.username}` : 'My Account'}
+              <DropdownMenuLabel className="flex justify-between items-center">
+                {isGuestMode ? (
+                  <>
+                    <span>Guest Mode</span>
+                    <div className="px-1.5 py-0.5 text-[10px] rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                      Limited
+                    </div>
+                  </>
+                ) : user?.username ? (
+                  `Hi, ${user.username}`
+                ) : (
+                  'My Account'
+                )}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <Link href="/profile">
-                <DropdownMenuItem className="cursor-pointer">
-                  <User className="h-4 w-4 mr-2" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-              </Link>
-              <Link href="/stats">
-                <DropdownMenuItem className="cursor-pointer">
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span>Stats</span>
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                <span>Sign Out</span>
-              </DropdownMenuItem>
+              
+              {isGuestMode && (
+                <>
+                  <DropdownMenuItem className="text-xs text-muted-foreground">
+                    Your data won't be saved between sessions
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-blue-600 dark:text-blue-400"
+                    onClick={() => {
+                      disableGuestMode();
+                      navigate('/auth');
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span>Sign In/Register</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+              
+              {!isGuestMode && (
+                <>
+                  <Link href="/profile">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <User className="h-4 w-4 mr-2" />
+                      <span>Profile</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/stats">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Settings className="h-4 w-4 mr-2" />
+                      <span>Stats</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

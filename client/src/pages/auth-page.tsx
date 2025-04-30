@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuest } from "@/context/GuestContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +38,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [, navigate] = useLocation();
   const { user, isLoading, loginMutation, registerMutation } = useAuth();
+  const { enableGuestMode } = useGuest();
   
   // Redirect if already logged in
   useEffect(() => {
