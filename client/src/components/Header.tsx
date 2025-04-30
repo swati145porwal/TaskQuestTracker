@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTaskContext } from "@/context/TaskContext";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuest } from "@/context/GuestContext";
 import { ThemeToggle } from "./ThemeToggle";
 import { Link, useLocation } from "wouter";
 import { 
@@ -27,6 +28,7 @@ interface HeaderProps {
 export default function Header({ title }: HeaderProps) {
   const { user, tasks, openAddTaskModal } = useTaskContext();
   const { logoutMutation } = useAuth();
+  const { isGuestMode, guestUser, disableGuestMode } = useGuest();
   const [, navigate] = useLocation();
   const [viewedNotifications, setViewedNotifications] = useState(true);
   

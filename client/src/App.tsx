@@ -14,10 +14,12 @@ import ProfilePage from "@/pages/ProfilePage";
 import CalendarPage from "@/pages/CalendarPage";
 import CalendarImportPage from "@/pages/CalendarImportPage";
 import AuthPage from "@/pages/auth-page";
+import GuestPage from "@/pages/GuestPage";
 import PointsAnimation from "@/components/PointsAnimation";
 import NotificationSystem from "@/components/NotificationSystem";
 import { TaskProvider } from "./context/TaskContext";
 import { AuthProvider } from "./hooks/use-auth";
+import { GuestProvider } from "./context/GuestContext";
 import { ProtectedRoute } from "./lib/protected-route";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -26,11 +28,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <TaskProvider>
-            <TooltipProvider>
-              <AppContent />
-            </TooltipProvider>
-          </TaskProvider>
+          <GuestProvider>
+            <TaskProvider>
+              <TooltipProvider>
+                <AppContent />
+              </TooltipProvider>
+            </TaskProvider>
+          </GuestProvider>
         </AuthProvider>
         <Toaster />
       </ThemeProvider>
@@ -67,6 +71,7 @@ function AppRouter() {
       <ProtectedRoute path="/history" component={HistoryPage} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/guest" component={GuestPage} />
       <Route component={NotFound} />
     </Switch>
   );

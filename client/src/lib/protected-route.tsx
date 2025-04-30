@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useGuest } from "@/context/GuestContext";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 
@@ -10,6 +11,7 @@ export function ProtectedRoute({
   component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
+  const { isGuestMode, guestUser } = useGuest();
 
   if (isLoading) {
     return (
@@ -21,7 +23,8 @@ export function ProtectedRoute({
     );
   }
 
-  if (!user) {
+  // Allow access if either authenticated or in guest mode
+  if (!user && !isGuestMode) {
     return (
       <Route path={path}>
         <Redirect to="/auth" />

@@ -15,12 +15,12 @@ export const GuestContext = createContext<GuestContextType | null>(null);
 const createGuestUser = (): User => ({
   id: -1, // Use negative ID to indicate guest user
   username: "Guest",
+  password: "", // Password is required in the type but not used for guest
   points: 0,
   streak: 0,
   googleRefreshToken: null,
   googleEmail: null,
   googlePictureUrl: null,
-  createdAt: new Date(),
   currentAvatarId: null
 });
 
