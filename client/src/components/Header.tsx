@@ -113,15 +113,15 @@ export default function Header({ title }: HeaderProps) {
 
   
   return (
-    <header className="glass-effect sticky top-0 z-20 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <header className="glass-effect sticky top-0 z-20 backdrop-blur-md border-b">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/">
             <div className="flex items-center cursor-pointer">
-              <div className="bg-gradient-to-tr from-primary to-secondary p-2 rounded-lg shadow-lg mr-3 hover-card">
-                <i className="ri-gamepad-line text-white text-xl"></i>
+              <div className="bg-primary text-white p-1.5 rounded-md mr-2.5">
+                <i className="ri-gamepad-line text-white text-lg"></i>
               </div>
-              <h1 className="text-xl font-bold font-outfit text-gradient">
+              <h1 className="text-lg font-semibold font-outfit text-foreground">
                 {title || "TaskQuest"}
               </h1>
             </div>
@@ -131,10 +131,10 @@ export default function Header({ title }: HeaderProps) {
         <div className="flex items-center space-x-3">
           {/* Add Task Button */}
           <motion.button 
-            className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-primary/30 transition-all w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 md:gap-1.5"
+            className="bg-primary hover:bg-primary/90 text-white rounded-md flex items-center justify-center shadow-sm transition-all w-9 h-9 md:w-auto md:h-auto md:px-3 md:py-1.5 md:gap-1.5"
             onClick={openAddTaskModal}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline text-sm font-medium">New Task</span>

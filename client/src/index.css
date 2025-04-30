@@ -4,24 +4,24 @@
 @tailwind utilities;
 
 :root {
-  /* Main colors - more vibrant */
-  --background: 210 50% 98%;
-  --foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 25% 40%;
+  /* Main colors - more minimalistic */
+  --background: 0 0% 100%;
+  --foreground: 224 71% 4%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 9% 46%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 224 71% 4%;
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --card-foreground: 224 71% 4%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
   
-  /* Primary - vibrant purple */
-  --primary: 262 83% 58%;
+  /* Primary - more subtle blue */
+  --primary: 221 83% 53%;
   --primary-foreground: 0 0% 100%;
   
-  /* Secondary - soft blue */
-  --secondary: 221 83% 53%;
+  /* Secondary - light blue */
+  --secondary: 221 70% 45%;
   --secondary-foreground: 210 40% 98%;
   
   /* Accent - coral */
@@ -45,22 +45,22 @@
 }
 
 .dark {
-  --background: 222 47% 5%;
-  --foreground: 210 40% 98%;
-  --muted: 217 33% 17%;
+  --background: 224 71% 4%;
+  --foreground: 210 20% 98%;
+  --muted: 223 47% 11%;
   --muted-foreground: 215 20% 65%;
-  --popover: 222 47% 5%;
-  --popover-foreground: 210 40% 98%;
-  --card: 222 47% 8%;
-  --card-foreground: 210 40% 98%;
-  --border: 217 33% 20%;
-  --input: 217 33% 20%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 210 20% 98%;
+  --card: 224 71% 6%;
+  --card-foreground: 210 20% 98%;
+  --border: 215 28% 17%;
+  --input: 215 28% 17%;
   
-  --primary: 262 83% 58%;
+  --primary: 217 91% 60%;
   --primary-foreground: 0 0% 100%;
   
-  --secondary: 221 83% 53%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 217 91% 50%;
+  --secondary-foreground: 210 20% 98%;
   
   --accent: 346 84% 61%;
   --accent-foreground: 210 40% 98%;
@@ -85,85 +85,64 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     background-image: 
-      radial-gradient(circle at top right, rgba(138, 43, 226, 0.05), transparent 40%),
-      radial-gradient(circle at bottom left, rgba(30, 144, 255, 0.05), transparent 40%);
+      radial-gradient(circle at top right, rgba(66, 153, 225, 0.03), transparent 30%),
+      radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.03), transparent 30%);
     min-height: 100vh;
   }
   
   .dark body {
-    background-color: hsl(222 47% 5%);
+    background-color: hsl(224 71% 4%);
     background-image: 
-      radial-gradient(circle at top right, rgba(138, 43, 226, 0.08), transparent 40%),
-      radial-gradient(circle at bottom left, rgba(30, 144, 255, 0.08), transparent 40%);
+      radial-gradient(circle at top right, rgba(59, 130, 246, 0.04), transparent 30%),
+      radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.04), transparent 30%);
   }
 }
 
 @layer components {
   /* Custom card styles */
   .task-card {
-    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 1) 0%, 
-      rgba(252, 250, 255, 1) 100%);
+    @apply transition-all duration-300 hover:shadow-sm hover:-translate-y-0.5 bg-white;
   }
   
   .dark .task-card {
-    background: linear-gradient(135deg, 
-      rgba(30, 30, 36, 1) 0%, 
-      rgba(26, 26, 32, 1) 100%);
+    @apply bg-card;
   }
   
   .task-card.completed {
-    background: linear-gradient(135deg, 
-      rgba(249, 250, 251, 1) 0%, 
-      rgba(243, 244, 246, 1) 100%);
+    @apply bg-muted/70;
   }
   
   .dark .task-card.completed {
-    background: linear-gradient(135deg, 
-      rgba(38, 38, 45, 1) 0%, 
-      rgba(33, 33, 39, 1) 100%);
-    @apply opacity-70;
+    @apply bg-muted/50 opacity-70;
   }
   
   .reward-card {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 1) 0%, 
-      rgba(252, 250, 255, 1) 100%);
+    @apply transition-all duration-300 hover:shadow-sm hover:-translate-y-1 bg-white;
   }
   
   .dark .reward-card {
-    background: linear-gradient(135deg, 
-      rgba(30, 30, 36, 1) 0%, 
-      rgba(26, 26, 32, 1) 100%);
+    @apply bg-card;
   }
   
-  /* Custom button styles */
+  /* Custom button styles - more subtle */
   .add-button {
-    @apply bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/30;
+    @apply bg-primary hover:bg-primary/90 shadow-md hover:shadow-primary/20;
   }
   
-  /* Progress bar animation */
+  /* Progress bar - simplified */
   .progress-fill {
-    background-image: linear-gradient(
-      to right,
-      hsl(var(--primary)) 0%, 
-      hsl(var(--secondary)) 100%
-    );
-    background-size: 200% 100%;
-    animation: gradient-shift 2s ease infinite;
+    @apply bg-primary;
   }
   
   /* Custom checkbox styles */
   .custom-checkbox:hover i {
-    @apply opacity-30;
+    @apply opacity-50;
   }
   
-  /* Points badge glow effect */
+  /* Points badge - more subtle */
   .points-badge {
-    @apply bg-primary/10 transition-all;
-    box-shadow: 0 0 8px 0 hsla(var(--primary), 0.3);
+    @apply bg-primary/5 transition-all;
+    box-shadow: 0 0 4px 0 hsla(var(--primary), 0.1);
   }
   
   /* Hide scrollbar */
@@ -183,77 +162,52 @@
   background-image: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
 }
 
-/* Glass morphism effect */
+/* Glass morphism effect - more subtle */
 .glass-effect {
-  @apply bg-white/70 backdrop-blur-lg border border-white/20;
+  @apply bg-white/90 backdrop-blur-sm border border-gray-100;
 }
 
 .dark .glass-effect {
-  @apply bg-gray-900/70 backdrop-blur-lg border border-gray-800/50;
+  @apply bg-gray-900/90 backdrop-blur-sm border border-gray-800/30;
 }
 
-/* Shimmer animation */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%) skewX(-45deg);
-  }
-  100% {
-    transform: translateX(200%) skewX(-45deg);
-  }
-}
-
+/* Gradient animation - simplified */
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
   }
-  50% {
-    background-position: 100% 50%;
-  }
   100% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
 }
 
-/* Card hover effects */
+/* Card hover effects - more subtle */
 .hover-card {
-  transition: all 0.3s ease;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  transition: all 0.2s ease;
 }
 
 .hover-card:hover {
-  transform: translateY(-5px) translateZ(0);
-  box-shadow: 0 12px 20px -10px hsla(var(--primary), 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px -4px hsla(var(--primary), 0.15);
 }
 
-/* Animated dots pulse effect */
-@keyframes dotPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.5;
-  }
-}
-
+/* Simplified badge effect */
 .dot-pulse {
-  animation: dotPulse 1.5s infinite;
+  transition: all 0.2s ease;
 }
 
-/* Floating animation for important elements */
+/* Reduced floating animation */
 @keyframes floating {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 }
 
 .floating {
-  animation: floating 3s ease-in-out infinite;
+  animation: floating 4s ease-in-out infinite;
 }
 
 /* Fade in animation */
