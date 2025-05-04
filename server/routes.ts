@@ -172,15 +172,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const parsedCompletedTask = insertCompletedTaskSchema.parse(completedTaskData);
       await storage.createCompletedTask(parsedCompletedTask);
       
-      // Update user points
+      // Update user points and check streak
       const user = await storage.getUser(task.userId);
       
       if (user) {
         await storage.updateUserPoints(user.id, user.points + task.points);
+        
+        // Check if the user has completed a task today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Get completed tasks from the last few days to calculate streak
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        
+        const recentCompletedTasks = await storage.getCompletedTasksForTimePeriod(
+          userId,
+          threeMonthsAgo,
+          new Date(today.getTime() + 24 * 60 * 60 * 1000) // Include today
+        );
+        
+        // Group completed tasks by day
+        const completedDays = new Map();
+        recentCompletedTasks.forEach(task => {
+          const taskDate = new Date(task.completedAt);
+          taskDate.setHours(0, 0, 0, 0);
+          completedDays.set(taskDate.getTime(), true);
+        });
+        
+        // Calculate current streak
+        let currentStreak = 0;
+        let dayToCheck = today;
+        
+        // Check today and previous days in sequence
+        while (completedDays.has(dayToCheck.getTime())) {
+          currentStreak++;
+          dayToCheck.setDate(dayToCheck.getDate() - 1);
+        }
+        
+        // Update the user's streak if it's higher than their current one
+        if (currentStreak > user.streak) {
+          await storage.updateUserStreak(userId, currentStreak);
+        }
       }
       
       res.json({ success: true, pointsEarned: task.points });
     } catch (error) {
+      console.error("Error completing task:", error);
       res.status(500).json({ error: "Failed to complete task" });
     }
   });
