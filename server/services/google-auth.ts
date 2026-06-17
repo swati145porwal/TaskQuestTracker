@@ -1,12 +1,30 @@
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
+function getOAuthRedirectUri(): string {
+  if (process.env.NODE_ENV !== "production") {
+    return `http://localhost:${process.env.PORT || 5000}/api/google/callback`;
+  }
+
+  const host =
+    process.env.HOST ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    process.env.VERCEL_URL;
+
+  if (!host) {
+    throw new Error("HOST, VERCEL_URL, or VERCEL_PROJECT_PRODUCTION_URL must be set in production");
+  }
+
+  const origin = host.startsWith("http") ? host : `https://${host}`;
+  return `${origin}/api/google/callback`;
+}
+
 // Create OAuth2 client
 export function createOAuth2Client(): OAuth2Client {
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NODE_ENV === 'production' ? 'https://' : 'http://'}${process.env.NODE_ENV === 'production' ? process.env.HOST : 'localhost:5000'}/api/google/callback`
+    getOAuthRedirectUri(),
   );
   
   return oAuth2Client;

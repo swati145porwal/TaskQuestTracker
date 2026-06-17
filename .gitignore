@@ -43,6 +43,8 @@ ehthumbs.db
 Thumbs.db
 
 server/public
+public/index.html
+public/assets/
 vite.config.ts.*
 *.tar.gz
 .env
