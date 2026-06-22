@@ -13,7 +13,7 @@ export function ProtectedRoute({
   const { user, isLoading } = useAuth();
   const { isGuestMode, guestUser } = useGuest();
 
-  if (isLoading) {
+  if (isLoading && !isGuestMode) {
     return (
       <Route path={path}>
         <div className="flex items-center justify-center min-h-screen">

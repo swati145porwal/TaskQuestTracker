@@ -6,6 +6,7 @@ type GuestContextType = {
   guestUser: User | null;
   enableGuestMode: () => void;
   disableGuestMode: () => void;
+  updateGuestUser: (updates: Partial<User>) => void;
 };
 
 export const GuestContext = createContext<GuestContextType | null>(null);
@@ -31,7 +32,7 @@ export function GuestProvider({ children }: { children: ReactNode }) {
   // Check for authenticated user first, then initialize guest mode if needed
   useEffect(() => {
     // Check if user is logged in
-    fetch('/api/user')
+    fetch("/api/user", { signal: AbortSignal.timeout(10_000) })
       .then(res => {
         if (res.ok && res.status !== 401) {
           // User is logged in, disable guest mode
@@ -44,7 +45,10 @@ export function GuestProvider({ children }: { children: ReactNode }) {
           if (storedGuestMode === 'true') {
             console.log('Initializing guest mode from localStorage');
             setIsGuestMode(true);
-            setGuestUser(createGuestUser());
+            const storedGuestUser = localStorage.getItem('guestUser');
+            setGuestUser(
+              storedGuestUser ? JSON.parse(storedGuestUser) : createGuestUser(),
+            );
           }
         }
       })
@@ -54,7 +58,10 @@ export function GuestProvider({ children }: { children: ReactNode }) {
         const storedGuestMode = localStorage.getItem('guestMode');
         if (storedGuestMode === 'true') {
           setIsGuestMode(true);
-          setGuestUser(createGuestUser());
+          const storedGuestUser = localStorage.getItem('guestUser');
+          setGuestUser(
+            storedGuestUser ? JSON.parse(storedGuestUser) : createGuestUser(),
+          );
         }
       })
       .finally(() => {
@@ -64,9 +71,12 @@ export function GuestProvider({ children }: { children: ReactNode }) {
 
   const enableGuestMode = () => {
     console.log('Enabling guest mode');
+    const storedGuestUser = localStorage.getItem('guestUser');
+    const user = storedGuestUser ? JSON.parse(storedGuestUser) : createGuestUser();
     setIsGuestMode(true);
-    setGuestUser(createGuestUser());
+    setGuestUser(user);
     localStorage.setItem('guestMode', 'true');
+    localStorage.setItem('guestUser', JSON.stringify(user));
   };
 
   const disableGuestMode = () => {
@@ -74,6 +84,16 @@ export function GuestProvider({ children }: { children: ReactNode }) {
     setIsGuestMode(false);
     setGuestUser(null);
     localStorage.removeItem('guestMode');
+    localStorage.removeItem('guestUser');
+  };
+
+  const updateGuestUser = (updates: Partial<User>) => {
+    setGuestUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('guestUser', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (
@@ -83,6 +103,7 @@ export function GuestProvider({ children }: { children: ReactNode }) {
         guestUser,
         enableGuestMode,
         disableGuestMode,
+        updateGuestUser,
       }}
     >
       {children}

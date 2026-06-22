@@ -47,9 +47,9 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   throw err;
 });
 
-const isVercel = !!process.env.VERCEL;
+const isServerless = !!(process.env.VERCEL || process.env.NETLIFY);
 
-if (!isVercel) {
+if (!isServerless) {
   if (process.env.REPLIT_DEPLOYMENT) {
     serveStatic(app);
   } else if (

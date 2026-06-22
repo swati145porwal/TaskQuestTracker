@@ -8,11 +8,15 @@ function getOAuthRedirectUri(): string {
 
   const host =
     process.env.HOST ||
+    process.env.URL ||
+    process.env.DEPLOY_PRIME_URL ||
     process.env.VERCEL_PROJECT_PRODUCTION_URL ||
     process.env.VERCEL_URL;
 
   if (!host) {
-    throw new Error("HOST, VERCEL_URL, or VERCEL_PROJECT_PRODUCTION_URL must be set in production");
+    throw new Error(
+      "HOST, URL, VERCEL_URL, or VERCEL_PROJECT_PRODUCTION_URL must be set in production",
+    );
   }
 
   const origin = host.startsWith("http") ? host : `https://${host}`;

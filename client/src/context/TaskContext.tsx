@@ -49,7 +49,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   
   const { toast } = useToast();
   const { user } = useAuth();
-  const { isGuestMode, guestUser } = useGuest();
+  const { isGuestMode, guestUser, updateGuestUser } = useGuest();
 
   // Get the effective user (either authenticated user or guest user)
   const effectiveUser = user || (isGuestMode ? guestUser : null);
@@ -59,17 +59,26 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const [guestRewards, setGuestRewards] = useState<Reward[]>([]);
   const [guestRedeemedRewards, setGuestRedeemedRewards] = useState<(RedeemedReward & { reward?: Reward })[]>([]);
 
-  // Initialize guest data from localStorage
+  // Initialize guest data from localStorage and sync to UI state
   useEffect(() => {
-    if (isGuestMode) {
-      const storedTasks = localStorage.getItem('guestTasks');
-      const storedRewards = localStorage.getItem('guestRewards');
-      const storedRedeemedRewards = localStorage.getItem('guestRedeemedRewards');
-      
-      if (storedTasks) setGuestTasks(JSON.parse(storedTasks));
-      if (storedRewards) setGuestRewards(JSON.parse(storedRewards));
-      if (storedRedeemedRewards) setGuestRedeemedRewards(JSON.parse(storedRedeemedRewards));
-    }
+    if (!isGuestMode) return;
+
+    const storedTasks = localStorage.getItem("guestTasks");
+    const storedRewards = localStorage.getItem("guestRewards");
+    const storedRedeemedRewards = localStorage.getItem("guestRedeemedRewards");
+
+    const parsedTasks = storedTasks ? JSON.parse(storedTasks) : [];
+    const parsedRewards = storedRewards ? JSON.parse(storedRewards) : [];
+    const parsedRedeemedRewards = storedRedeemedRewards
+      ? JSON.parse(storedRedeemedRewards)
+      : [];
+
+    setGuestTasks(parsedTasks);
+    setGuestRewards(parsedRewards);
+    setGuestRedeemedRewards(parsedRedeemedRewards);
+    setTasks(parsedTasks);
+    setRewards(parsedRewards);
+    setRedeemedRewards(parsedRedeemedRewards);
   }, [isGuestMode]);
 
   // Update localStorage when guest data changes
@@ -102,9 +111,10 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     
     // Regular user with API calls
     try {
-      const tasksResponse = await fetch("/api/tasks");
-      const rewardsResponse = await fetch("/api/rewards");
-      const redeemedRewardsResponse = await fetch("/api/redeemed-rewards");
+      const fetchOpts: RequestInit = { credentials: "include" };
+      const tasksResponse = await fetch("/api/tasks", fetchOpts);
+      const rewardsResponse = await fetch("/api/rewards", fetchOpts);
+      const redeemedRewardsResponse = await fetch("/api/redeemed-rewards", fetchOpts);
       
       if (tasksResponse.ok) {
         const tasksData = await tasksResponse.json();
@@ -155,11 +165,9 @@ export function TaskProvider({ children }: { children: ReactNode }) {
           isCompleted: true
         };
         
-        // Update the guest user points
-        const updatedGuestUser = {
-          ...guestUser,
-          points: (guestUser.points || 0) + pointsEarned
-        };
+        updateGuestUser({
+          points: (guestUser.points || 0) + pointsEarned,
+        });
         
         // Add to completed tasks
         const newCompletedTask = {
@@ -435,11 +443,9 @@ export function TaskProvider({ children }: { children: ReactNode }) {
           return;
         }
         
-        // Update guest user points
-        const updatedGuestUser = {
-          ...guestUser,
-          points: guestUser.points - reward.points
-        };
+        updateGuestUser({
+          points: guestUser.points - reward.points,
+        });
         
         // Create redeemed reward
         const newRedeemedReward = {

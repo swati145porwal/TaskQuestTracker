@@ -1,0 +1,31 @@
+[build]
+  command = "npm run build"
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["dist/**"]
+
+[functions.api]
+  timeout = 26
+
+# API routes → Express serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+# User uploads are served by Express, not static files
+[[redirects]]
+  from = "/uploads/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+# SPA fallback — Netlify serves existing static files first
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
