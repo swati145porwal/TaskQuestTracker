@@ -16,7 +16,7 @@ import fs from "fs";
 
 // Setup file upload middleware
 const uploadDir = path.join(
-  process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.VERCEL ? "/tmp" : process.cwd(),
+  (process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.VERCEL) ? "/tmp" : process.cwd(),
   "uploads",
 );
 
