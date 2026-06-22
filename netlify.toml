@@ -3,6 +3,10 @@
   publish = "public"
   functions = "netlify/functions"
 
+# NODE_ENV=production skips devDependencies, but Vite/esbuild need them to build
+[build.environment]
+  NPM_CONFIG_PRODUCTION = "false"
+
 [functions]
   node_bundler = "esbuild"
   included_files = ["dist/**"]
