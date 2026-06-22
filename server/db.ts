@@ -1,9 +1,9 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+// HTTP fetch mode works in Netlify/AWS Lambda (WebSocket mode does not)
+neonConfig.poolQueryViaFetch = true;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(

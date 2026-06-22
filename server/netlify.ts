@@ -1,4 +1,6 @@
 import serverless from "serverless-http";
-import app from "../../dist/index.js";
+import { createApp } from "./app.ts";
+
+const { app } = await createApp();
 
 export const handler = serverless(app);

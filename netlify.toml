@@ -9,10 +9,10 @@
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["dist/**"]
 
 [functions.api]
   timeout = 26
+  node_bundler = "none"
 
 # API routes → Express serverless function
 [[redirects]]
