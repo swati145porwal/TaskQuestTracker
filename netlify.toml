@@ -13,6 +13,7 @@
 [functions.api]
   timeout = 26
   node_bundler = "none"
+  included_files = ["node_modules/**"]
 
 # API routes → Express serverless function
 [[redirects]]
