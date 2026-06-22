@@ -10,8 +10,6 @@ import {
   insertTaskProofSchema,
   insertAvatarSchema
 } from "@shared/schema";
-import { createOAuth2Client, getAuthUrl, getTokens, getUserInfo } from "./services/google-auth";
-import { getCalendarEvents, convertEventsToTasks } from "./services/google-calendar";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -658,7 +656,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Google Auth routes
-  app.get('/api/google/auth', isAuthenticated, (req: Request, res: Response) => {
+  app.get('/api/google/auth', isAuthenticated, async (req: Request, res: Response) => {
+    const { createOAuth2Client, getAuthUrl } = await import("./services/google-auth");
     const oAuth2Client = createOAuth2Client();
     const authUrl = getAuthUrl(oAuth2Client);
     res.json({ authUrl });
@@ -676,6 +675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      const { createOAuth2Client, getTokens, getUserInfo } = await import("./services/google-auth");
       const oAuth2Client = createOAuth2Client();
       const tokens = await getTokens(oAuth2Client, code);
       
@@ -711,6 +711,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
+      const { createOAuth2Client } = await import("./services/google-auth");
+      const { getCalendarEvents, convertEventsToTasks } = await import("./services/google-calendar");
       const oAuth2Client = createOAuth2Client();
       
       // Set the credentials using the refresh token
