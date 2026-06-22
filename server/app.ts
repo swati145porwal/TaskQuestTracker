@@ -2,8 +2,10 @@ import express, { type Request, Response, NextFunction } from "express";
 import { type Server } from "http";
 import { registerRoutes } from "./routes";
 import { log } from "./log";
+import { storage } from "./storage";
 
 export async function createApp(): Promise<{ app: express.Express; server: Server }> {
+  await storage.ensureSessionTable();
   const app = express();
   app.set("trust proxy", 1);
   app.use(express.json());
