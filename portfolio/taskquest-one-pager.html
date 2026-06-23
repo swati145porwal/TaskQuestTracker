@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskQuest Tracker — Portfolio One-Pager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --muted: #5c5c7a;
+      --line: #e8e8f0;
+      --surface: #fafafa;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: #ececf4;
+      padding: 32px 16px;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    /* Header band */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      padding: 40px 48px 32px;
+      border-bottom: 1px solid var(--line);
+      align-items: end;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+    }
+
+    .live-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .live-link:hover { text-decoration: underline; }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .hero-meta {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .hero-meta strong { color: var(--ink); font-weight: 600; }
+
+    /* Main grid */
+    .body {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0;
+    }
+
+    .col {
+      padding: 32px 40px;
+    }
+
+    .col-left { border-right: 1px solid var(--line); }
+
+    h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* Architecture diagram */
+    .arch {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .arch-box {
+      flex: 1;
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      background: var(--surface);
+    }
+
+    .arch-box.highlight {
+      background: var(--accent-soft);
+      border-color: #c7d2fe;
+      color: var(--accent);
+    }
+
+    .arch-arrow {
+      text-align: center;
+      color: var(--muted);
+      font-size: 18px;
+      padding: 4px 0;
+      letter-spacing: 2px;
+    }
+
+    .arch-caption {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .features li {
+      font-size: 13px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .features li strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .features li span { color: var(--muted); font-size: 11px; }
+
+    /* Tech stack */
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 28px;
+    }
+
+    .pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .pill.accent {
+      background: var(--accent-soft);
+      border-color: #c7d2fe;
+      color: var(--accent);
+    }
+
+    /* Challenge cards */
+    .challenges { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+    .challenge {
+      border-left: 3px solid var(--accent);
+      padding: 0 0 0 14px;
+    }
+
+    .challenge-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .challenge-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .challenge-fix {
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Stats row */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--line);
+    }
+
+    .stat {
+      padding: 20px 24px;
+      border-right: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-value {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 28px;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 16px 40px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--surface);
+    }
+
+    .footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    /* Print */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { border: none; max-width: 100%; }
+    }
+
+    @media (max-width: 720px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-meta { text-align: left; }
+      .body { grid-template-columns: 1fr; }
+      .col-left { border-right: none; border-bottom: 1px solid var(--line); }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(2) { border-right: none; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Full-Stack · Serverless · Portfolio Case Study</p>
+        <h1>TaskQuest Tracker</h1>
+        <p class="tagline">A gamified task tracker that turns daily routines into points, streaks, and rewards — deployed as a production full-stack app on Netlify.</p>
+        <a class="live-link" href="https://task-quest-tracker.netlify.app" target="_blank" rel="noopener">
+          <span class="live-dot"></span>
+          task-quest-tracker.netlify.app
+        </a>
+      </div>
+      <div class="hero-meta">
+        <div><strong>Stack</strong> React · Express · Neon</div>
+        <div><strong>Deploy</strong> Netlify Functions</div>
+        <div><strong>Auth</strong> Passport + Postgres sessions</div>
+        <div><strong>Year</strong> 2026</div>
+      </div>
+    </header>
+
+    <div class="body">
+      <section class="col col-left">
+        <h2>Architecture</h2>
+        <div class="arch">
+          <div class="arch-row">
+            <div class="arch-box">Browser<br /><small style="font-weight:400;color:var(--muted)">React SPA</small></div>
+          </div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-row">
+            <div class="arch-box">Netlify CDN<br /><small style="font-weight:400;color:var(--muted)">Static assets + SPA routing</small></div>
+          </div>
+          <div class="arch-arrow">↓ /api/*</div>
+          <div class="arch-row">
+            <div class="arch-box highlight">Netlify Function<br /><small style="font-weight:400">Express · api.cjs · serverless-http</small></div>
+          </div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-row">
+            <div class="arch-box">Neon Postgres<br /><small style="font-weight:400;color:var(--muted)">Users · Tasks · Sessions</small></div>
+          </div>
+          <p class="arch-caption">Monorepo: Vite frontend + Express API bundled for serverless at build time</p>
+        </div>
+
+        <h2>Core Features</h2>
+        <ul class="features">
+          <li><strong>Task gamification</strong><span>Earn points and build streaks</span></li>
+          <li><strong>Rewards shop</strong><span>Redeem points for custom rewards</span></li>
+          <li><strong>Guest mode</strong><span>Try the app without an account</span></li>
+          <li><strong>Auth & sessions</strong><span>Register, login, persistent sessions</span></li>
+          <li><strong>Stats & history</strong><span>Track progress over time</span></li>
+          <li><strong>Calendar import</strong><span>Google Calendar integration</span></li>
+        </ul>
+      </section>
+
+      <section class="col">
+        <h2>Tech Stack</h2>
+        <div class="stack">
+          <span class="pill accent">React 18</span>
+          <span class="pill accent">TypeScript</span>
+          <span class="pill accent">Vite</span>
+          <span class="pill">Express</span>
+          <span class="pill">Drizzle ORM</span>
+          <span class="pill">Neon Postgres</span>
+          <span class="pill">Passport.js</span>
+          <span class="pill">TanStack Query</span>
+          <span class="pill">Tailwind CSS</span>
+          <span class="pill">Radix UI</span>
+          <span class="pill">Netlify Functions</span>
+          <span class="pill">esbuild</span>
+        </div>
+
+        <h2>Deployment Highlights</h2>
+        <ul class="challenges">
+          <li class="challenge">
+            <div class="challenge-title">Serverless Express on Netlify</div>
+            <div class="challenge-desc">Bundled the full Express API into a single CommonJS function (api.cjs) with lazy init — no Vite deps at runtime.</div>
+            <div class="challenge-fix">→ 2.2 MB self-contained function artifact</div>
+          </li>
+          <li class="challenge">
+            <div class="challenge-title">Session store in Lambda</div>
+            <div class="challenge-desc">connect-pg-simple tried to read table.sql from disk — unavailable in /var/task.</div>
+            <div class="challenge-fix">→ Inline SQL session table creation via Neon pool</div>
+          </li>
+          <li class="challenge">
+            <div class="challenge-title">Neon + serverless constraints</div>
+            <div class="challenge-desc">WebSocket DB driver and multi-statement queries fail in Netlify functions.</div>
+            <div class="challenge-fix">→ poolQueryViaFetch + split SQL statements</div>
+          </li>
+          <li class="challenge">
+            <div class="challenge-title">Build pipeline</div>
+            <div class="challenge-desc">NODE_ENV=production skipped devDependencies needed by Vite/esbuild.</div>
+            <div class="challenge-fix">→ NPM_CONFIG_PRODUCTION=false in netlify.toml</div>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">7</div>
+        <div class="stat-label">App pages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">20+</div>
+        <div class="stat-label">API routes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">8</div>
+        <div class="stat-label">DB tables</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Serverless</div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>TaskQuest Tracker · Built & deployed by Swati Porwal</span>
+      <span>
+        <a href="https://github.com/swati145porwal/TaskQuestTracker" target="_blank" rel="noopener">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="https://task-quest-tracker.netlify.app" target="_blank" rel="noopener">Live demo</a>
+      </span>
+    </footer>
+  </article>
+</body>
+</html>

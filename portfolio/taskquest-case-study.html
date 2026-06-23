@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskQuest Tracker — Product Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --muted: #5c5c7a;
+      --line: #e8e8f0;
+      --surface: #f7f7fb;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --green: #059669;
+      --amber: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: #ececf4;
+      padding: 32px 16px 64px;
+      line-height: 1.65;
+    }
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .hero {
+      padding: 48px 56px 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 44px;
+      font-weight: 400;
+      line-height: 1.08;
+      margin-bottom: 16px;
+    }
+    .lede {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.6;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .meta-row strong { color: var(--ink); display: block; font-size: 12px; margin-bottom: 2px; }
+    section {
+      padding: 36px 56px;
+      border-bottom: 1px solid var(--line);
+    }
+    section:last-of-type { border-bottom: none; }
+    h2 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 26px;
+      font-weight: 400;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 24px 0 8px;
+      color: var(--ink);
+    }
+    p { margin-bottom: 14px; color: var(--ink); font-size: 15px; }
+    .muted { color: var(--muted); }
+    .callout {
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      padding: 18px 22px;
+      margin: 20px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .callout strong { color: var(--accent); }
+    .problem-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 24px 28px;
+      margin-bottom: 8px;
+    }
+    .problem-box h2 { color: #991b1b; font-size: 14px; font-family: "DM Sans", sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .problem-box p { color: #7f1d1d; margin: 0; }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .why-card {
+      border: 1px solid var(--line);
+      padding: 20px;
+      background: var(--surface);
+    }
+    .why-card .num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .why-card h3 { margin: 0 0 8px; font-size: 14px; }
+    .why-card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.55; }
+    .features { display: flex; flex-direction: column; gap: 20px; }
+    .feature {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .feature:last-child { border-bottom: none; padding-bottom: 0; }
+    .feature-rank {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: "DM Serif Display", serif;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #c7d2fe;
+    }
+    .feature h3 { margin: 0 0 6px; font-size: 16px; }
+    .feature p { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+    .feature-why {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 600;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-top: 20px;
+    }
+    .metric {
+      background: #fff;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .metric-value {
+      font-family: "DM Serif Display", serif;
+      font-size: 32px;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .metric-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .outcome-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+    .outcome-list li {
+      padding: 10px 0 10px 20px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      position: relative;
+    }
+    .outcome-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .outcome-list li:last-child { border-bottom: none; }
+    .footer {
+      padding: 20px 56px;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+    .footer a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    @media (max-width: 640px) {
+      .hero, section, .footer { padding-left: 28px; padding-right: 28px; }
+      h1 { font-size: 32px; }
+      .why-grid, .metrics { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { border: none; }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header class="hero">
+      <p class="eyebrow">Product Case Study · Solo Build · 2026</p>
+      <h1>TaskQuest Tracker</h1>
+      <p class="lede">
+        How I designed and shipped a gamified task tracker that closes the motivation gap
+        left by traditional to-do apps — turning task completion into a feedback loop users
+        actually want to return to.
+      </p>
+      <div class="meta-row">
+        <div><strong>Role</strong>Product design & full-stack engineering</div>
+        <div><strong>Platform</strong>Web · Mobile-responsive</div>
+        <div><strong>Status</strong>Live in production</div>
+        <div><strong>Link</strong><a href="https://task-quest-tracker.netlify.app" style="color:var(--accent)">task-quest-tracker.netlify.app</a></div>
+      </div>
+    </header>
+
+    <!-- PROBLEM -->
+    <section>
+      <div class="problem-box">
+        <h2>Problem statement</h2>
+        <p>
+          People abandon to-do lists because <strong>completing a task feels identical to ignoring one</strong> —
+          a checkbox with no emotional payoff, no progress signal, and no reason to come back tomorrow.
+          Existing productivity tools optimize for capture and organization, not for the behavioral loop
+          that turns repeated action into habit.
+        </p>
+      </div>
+      <p class="muted" style="margin-top:16px;font-size:14px;">
+        The core user pain: <em>"I write tasks down, but I don't feel rewarded when I finish them — so I stop opening the app."</em>
+      </p>
+      <h3>Who this is for</h3>
+      <p>
+        Individual users building daily routines — students, freelancers, and habit-seekers — who need
+        lightweight structure without enterprise project-management overhead. They want accountability
+        without guilt, and progress they can see.
+      </p>
+    </section>
+
+    <!-- SOLUTION -->
+    <section>
+      <h2>The solution</h2>
+      <p>
+        TaskQuest reframes daily tasks as <strong>quests</strong>. Every completion earns points, builds streaks,
+        and unlocks user-defined rewards — creating a closed motivation loop: task → points → reward → return.
+      </p>
+      <div class="callout">
+        <strong>Product thesis:</strong> If finishing a task triggers immediate visual feedback (points animation),
+        accumulates toward something personal (custom rewards), and shows up in a progress dashboard (stats + streak),
+        users have a reason to open the app again tomorrow.
+      </div>
+      <p>
+        The product ships as a full-stack web app: authenticated users get persistent tasks, points, and history
+        stored in Postgres; guest mode lets new users experience the loop instantly with zero signup friction.
+      </p>
+    </section>
+
+    <!-- WHY THIS APPROACH -->
+    <section>
+      <h2>Why this approach</h2>
+      <p class="muted" style="margin-bottom:20px;">
+        Three product bets that shaped every design and engineering decision.
+      </p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="num">01</div>
+          <h3>Gamification, not guilt</h3>
+          <p>
+            Streaks and points reward consistency instead of punishing missed days.
+            The UI celebrates completion with animations — dopamine at the moment of action,
+            not a passive archive of undone items.
+          </p>
+        </div>
+        <div class="why-card">
+          <div class="num">02</div>
+          <h3>User-owned rewards</h3>
+          <p>
+            Pre-built badges lose meaning fast. Letting users define their own rewards
+            ("30 min Netflix", "coffee run") ties the system to intrinsic motivation —
+            they set the stakes that matter to them.
+          </p>
+        </div>
+        <div class="why-card">
+          <div class="num">03</div>
+          <h3>Try before you trust</h3>
+          <p>
+            Guest mode removes signup as a gate. Users can create tasks, earn points, and
+            feel the loop in under 60 seconds — registration becomes a save-progress step,
+            not a commitment hurdle.
+          </p>
+        </div>
+        <div class="why-card">
+          <div class="num">04</div>
+          <h3>Full-stack persistence</h3>
+          <p>
+            A local-only habit app can't sync across devices. Building auth, sessions, and
+            a real database means the product works as a daily tool — not a demo that resets
+            on refresh.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOP 3 FEATURES -->
+    <section>
+      <h2>Top 3 features — and why they matter</h2>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-rank">1</div>
+          <div>
+            <h3>Points & completion loop</h3>
+            <p>
+              Each task carries a point value set by the user. Completing it triggers a points animation,
+              updates the running total, and logs the completion to history — instant, visible feedback
+              at the exact moment of action.
+            </p>
+            <p class="feature-why">
+              Why: Closes the motivation gap. Without immediate payoff, task apps are just lists.
+              Points make completion feel like progress, not housekeeping.
+            </p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-rank">2</div>
+          <div>
+            <h3>Custom rewards shop</h3>
+            <p>
+              Users create personal rewards with point costs — "Order takeout" for 50 points,
+              "Sleep in" for 100. Redeeming deducts points and logs the redemption, making the
+              economy tangible and self-directed.
+            </p>
+            <p class="feature-why">
+              Why: External motivation that actually sticks must be personal. Generic badges
+              don't work for everyone; user-defined rewards make the system adaptable to any lifestyle.
+            </p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-rank">3</div>
+          <div>
+            <h3>Streaks + stats dashboard</h3>
+            <p>
+              A streak counter on the profile, weekly completion charts, top tasks by frequency,
+              and completion-rate metrics give users a longitudinal view of habit formation —
+              not just today's list.
+            </p>
+            <p class="feature-why">
+              Why: Habits form when people see patterns over time. Stats turn daily actions into
+              a narrative of improvement, giving users a reason to maintain streaks across days.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICS -->
+    <section>
+      <h2>Metrics & product scope</h2>
+      <p class="muted">
+        Shipped product metrics that define scope, depth, and the end-to-end user journey —
+        from first visit to persistent habit tracking.
+      </p>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-value">&lt;60s</div>
+          <div class="metric-label">Time to first quest</div>
+          <div class="metric-desc">Guest mode lets users create and complete a task without registration</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">7</div>
+          <div class="metric-label">Product surfaces</div>
+          <div class="metric-desc">Tasks, rewards, stats, history, profile, calendar, auth — full habit loop</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">20+</div>
+          <div class="metric-label">API endpoints</div>
+          <div class="metric-desc">Auth, CRUD, stats, streaks, calendar import — production backend</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">3</div>
+          <div class="metric-label">Motivation layers</div>
+          <div class="metric-desc">Points (immediate), rewards (medium-term), streaks (long-term)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">8</div>
+          <div class="metric-label">Database tables</div>
+          <div class="metric-desc">Users, tasks, rewards, completions, sessions — persistent user state</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">100%</div>
+          <div class="metric-label">Serverless deploy</div>
+          <div class="metric-desc">Live on Netlify with zero dedicated server infrastructure</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:32px;">Outcome</h3>
+      <ul class="outcome-list">
+        <li>Shipped a production full-stack product solo — design, frontend, backend, database, and deployment</li>
+        <li>Registration and login work with persistent sessions; tasks survive page refresh and return visits</li>
+        <li>Guest mode converts curiosity into engagement before asking for account creation</li>
+        <li>Complete motivation loop live: create task → earn points → redeem reward → track streak → repeat</li>
+      </ul>
+    </section>
+
+    <!-- TECH NOTE -->
+    <section>
+      <h2>Technical execution (summary)</h2>
+      <p class="muted" style="font-size:14px;">
+        React + TypeScript frontend, Express API on Netlify Functions, Neon Postgres with Drizzle ORM,
+        Passport.js authentication, and TanStack Query for client state. Deployed serverless at
+        <a href="https://task-quest-tracker.netlify.app">task-quest-tracker.netlify.app</a>.
+        See the <a href="taskquest-one-pager.html">architecture one-pager</a> for deployment details.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <span>TaskQuest Tracker · Product case study by Swati Porwal</span>
+      <span>
+        <a href="https://task-quest-tracker.netlify.app">Live demo</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/swati145porwal/TaskQuestTracker">GitHub</a>
+      </span>
+    </footer>
+  </article>
+</body>
+</html>

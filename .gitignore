@@ -50,3 +50,5 @@ public/assets/
 vite.config.ts.*
 *.tar.gz
 .env
+# Local Netlify folder
+.netlify
